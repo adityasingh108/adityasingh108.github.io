@@ -677,6 +677,33 @@ section {
     color: var(--text-primary);
 }
 
+/* === TIMELINE SUMMARY (Concise Paragraph Style) === */
+.timeline-summary {
+    margin-top: 1rem;
+}
+
+.timeline-summary p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--border-color);
+    transition: border-color 0.3s ease;
+}
+
+.timeline-summary p:hover {
+    border-left-color: var(--accent-green);
+}
+
+.timeline-summary p:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-summary p strong {
+    color: var(--text-primary);
+}
+
 /* === PROJECTS SECTION === */
 .projects-grid {
     display: grid;
