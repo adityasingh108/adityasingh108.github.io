@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aditya Kumar Singh | Security Analyst</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Matrix Rain Canvas Background -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="prompt">root@aditya:~$</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home" data-text="home">[home]</a></li>
+                <li><a href="#about" data-text="about">[about]</a></li>
+                <li><a href="#skills" data-text="skills">[skills]</a></li>
+                <li><a href="#experience" data-text="experience">[experience]</a></li>
+                <li><a href="#projects" data-text="projects">[projects]</a></li>
+                <li><a href="#writeups" data-text="writeups">[writeups]</a></li>
+                <li><a href="#achievements" data-text="achievements">[achievements]</a></li>
+                <li><a href="#contact" data-text="contact">[contact]</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="terminal-box">
+                <div class="terminal-header">
+                    <span class="terminal-btn close"></span>
+                    <span class="terminal-btn minimize"></span>
+                    <span class="terminal-btn maximize"></span>
+                    <span class="terminal-title">aditya@kali:~/security</span>
+                </div>
+                <div class="terminal-body">
+                    <p class="terminal-line"><span class="prompt">$</span> <span class="command">whoami</span></p>
+                    <p class="terminal-line response">Aditya Kumar Singh</p>
+                    <p class="terminal-line"><span class="prompt">$</span> <span class="command">cat role.txt</span></p>
+                    <p class="terminal-line response">Security Analyst | VAPT Specialist | Penetration Tester</p>
+                    <p class="terminal-line"><span class="prompt">$</span> <span class="command">cat stats.json</span></p>
+                    <p class="terminal-line response">{</p>
+                    <p class="terminal-line response indent">"experience": "3+ years",</p>
+                    <p class="terminal-line response indent">"vulnerabilities_found": "100+",</p>
+                    <p class="terminal-line response indent">"applications_tested": "40+",</p>
+                    <p class="terminal-line response indent">"remediation_rate": "~80%"</p>
+                    <p class="terminal-line response">}</p>
+                    <p class="terminal-line"><span class="prompt">$</span> <span class="command">cat github_profile</span></p>
+                    <p class="terminal-line response">https://github.com/adityasingh108</p>
+                    <p class="terminal-line"><span class="prompt">$</span> <span class="cursor">_</span></p>
+                </div>
+            </div>
+            <div class="hero-cta">
+                <a href="#contact" class="btn btn-primary">init_contact()</a>
+                <a href="#about" class="btn btn-secondary">explore()</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span class="scroll-text">scroll_down()</span>
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">[SECTION]</span>
+                <h2 class="section-title">about<span class="blink">_</span></h2>
+            </div>
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="card-header">
+                        <i class="fas fa-shield-halved"></i>
+                        <h3>Security Analyst</h3>
+                    </div>
+                    <p class="about-text">
+                        Security Analyst with 3 years at TCS, specializing in <span class="highlight">VAPT</span> across web, API, mobile (Android/iOS), AWS cloud, and network infrastructure. I've reported <span class="highlight">100+ vulnerabilities</span> across 40+ applications and authored <span class="highlight">50+ security reports</span> with an ~80% remediation rate.
+                    </p>
+                    <p class="about-text">
+                        Led end-to-end security testing for <span class="highlight">Experian</span> using OWASP Top 10 and OWASP API Top 10 as core testing frameworks. I thrive in finding what others miss.
+                    </p>
+                    <div class="about-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">100+</span>
+                            <span class="stat-label">Vulnerabilities Found</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">40+</span>
+                            <span class="stat-label">Apps Tested</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">50+</span>
+                            <span class="stat-label">Reports Authored</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">80%</span>
+                            <span class="stat-label">Remediation Rate</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                            <span class="code-filename">profile.py</span>
+                        </div>
+                        <pre class="code-content">
+<span class="code-keyword">class</span> <span class="code-class">SecurityAnalyst</span>:
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-param">self</span>):
+        <span class="code-param">self</span>.name = <span class="code-string">"Aditya Kumar Singh"</span>
+        <span class="code-param">self</span>.role = <span class="code-string">"Security Analyst"</span>
+        <span class="code-param">self</span>.company = <span class="code-string">"TCS"</span>
+        <span class="code-param">self</span>.location = <span class="code-string">"Bhubaneswar, India"</span>
+        <span class="code-param">self</span>.experience = <span class="code-number">3</span>  <span class="code-comment"># years</span>
+        <span class="code-param">self</span>.specializations = [
+            <span class="code-string">"Web App Pentesting"</span>,
+            <span class="code-string">"API Security"</span>,
+            <span class="code-string">"Mobile Security"</span>,
+            <span class="code-string">"Cloud Security (AWS)"</span>,
+            <span class="code-string">"Network Pentesting"</span>
+        ]
+    
+    <span class="code-keyword">def</span> <span class="code-function">find_bugs</span>(<span class="code-param">self</span>, <span class="code-param">target</span>):
+        <span class="code-keyword">return</span> <span class="code-string">"Critical vulnerabilities exposed"</span>
+                        </pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="skills">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">[SECTION]</span>
+                <h2 class="section-title">skills<span class="blink">_</span></h2>
+            </div>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <div class="skill-header">
+                        <i class="fas fa-shield-halved"></i>
+                        <h3>Security</h3>
+                    </div>
+                    <div class="skill-tags">
+                        <span class="skill-tag">VAPT</span>
+                        <span class="skill-tag">Web App Security</span>
+                        <span class="skill-tag">API Security</span>
+                        <span class="skill-tag">Mobile Security</span>
+                        <span class="skill-tag">Cloud Security (AWS)</span>
+                        <span class="skill-tag">Network Security</span>
+                        <span class="skill-tag">Secure Code Review</span>
+                        <span class="skill-tag">OWASP Top 10</span>
+                        <span class="skill-tag">OWASP API Top 10</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <div class="skill-header">
+                        <i class="fas fa-tools"></i>
+                        <h3>Tools</h3>
+                    </div>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Burp Suite</span>
+                        <span class="skill-tag">OWASP ZAP</span>
+                        <span class="skill-tag">SQLmap</span>
+                        <span class="skill-tag">Nmap</span>
+                        <span class="skill-tag">Nessus</span>
+                        <span class="skill-tag">OpenVAS</span>
+                        <span class="skill-tag">Metasploit</span>
+                        <span class="skill-tag">MobSF</span>
+                        <span class="skill-tag">Frida</span>
+                        <span class="skill-tag">Drozer</span>
+                        <span class="skill-tag">Postman</span>
+                        <span class="skill-tag">Splunk</span>
+                        <span class="skill-tag">ELK</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <div class="skill-header">
+                        <i class="fas fa-cloud"></i>
+                        <h3>Cloud & Platforms</h3>
+                    </div>
+                    <div class="skill-tags">
+                        <span class="skill-tag">AWS IAM</span>
+                        <span class="skill-tag">AWS EC2</span>
+                        <span class="skill-tag">AWS S3</span>
+                        <span class="skill-tag">AWS VPC</span>
+                        <span class="skill-tag">CIS Benchmarks</span>
+                        <span class="skill-tag">Linux (Kali)</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <div class="skill-header">
+                        <i class="fas fa-code"></i>
+                        <h3>Languages & Frameworks</h3>
+                    </div>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">Java</span>
+                        <span class="skill-tag">C</span>
+                        <span class="skill-tag">C++</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">SQL</span>
+                        <span class="skill-tag">Bash</span>
+                        <span class="skill-tag">Django</span>
+                        <span class="skill-tag">Flask</span>
+                        <span class="skill-tag">REST APIs</span>
+                        <span class="skill-tag">Git</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="experience">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">[SECTION]</span>
+                <h2 class="section-title">experience<span class="blink">_</span></h2>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <h3>Security Analyst</h3>
+                            <span class="timeline-badge current">CURRENT</span>
+                        </div>
+                        <p class="timeline-company">Tata Consultancy Services (TCS)</p>
+                        <p class="timeline-location"><i class="fas fa-map-marker-alt"></i> Bhubaneswar, India</p>
+                        <p class="timeline-date"><i class="fas fa-calendar"></i> Nov 2023 – Present</p>
+                        <ul class="timeline-details">
+                            <li>Led end-to-end VAPT (AWS cloud, mobile, and web) for the <strong>Experian</strong> engagement, managing the full assessment lifecycle from scoping to final report sign-off across a <strong>40+ app environment</strong>.</li>
+                            <li>Uncovered <strong>100+ vulnerabilities</strong> — including critical/high-severity authentication bypass, broken authorization, and injection flaws — applying OWASP Top 10 and OWASP API Top 10 as core testing frameworks.</li>
+                            <li>Executed Android and iOS mobile security assessments using <strong>MobSF, Drozer, Frida, and ADB</strong>, exposing insecure data storage, weak session handling, and improper platform usage across 15+ mobile applications.</li>
+                            <li>Ran web and API penetration tests with <strong>Burp Suite, OWASP ZAP, SQLmap, and Postman</strong>, surfacing SQL injection, broken access control, and BOLA vulnerabilities across 25+ web and API targets.</li>
+                            <li>Hardened AWS cloud posture by auditing <strong>IAM, S3, EC2, and VPC</strong> configurations against CIS benchmarks, flagging overly permissive IAM policies and publicly exposed S3 buckets.</li>
+                            <li>Mapped network attack surface using <strong>Nmap, Nessus, OpenVAS, and Metasploit</strong> to detect exploitable services and unpatched software.</li>
+                            <li>Authored <strong>50+ vulnerability reports</strong> with PoC evidence and CVSS-based risk ratings, supporting ~80% finding remediation rate; triaged security events via <strong>Splunk and ELK</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <h3>Software Developer Intern</h3>
+                        </div>
+                        <p class="timeline-company">Sarva Suvidha Pvt. Ltd.</p>
+                        <p class="timeline-location"><i class="fas fa-map-marker-alt"></i> Remote</p>
+                        <p class="timeline-date"><i class="fas fa-calendar"></i> Sep 2022 – Nov 2022</p>
+                        <ul class="timeline-details">
+                            <li>Built and shipped features for <strong>10+ Django-based applications</strong>, integrating NumPy, Pandas, and Matplotlib for data processing and visualization.</li>
+                            <li>Hosted applications on <strong>AWS (EC2, S3)</strong> and configured CI/CD pipelines using <strong>Jenkins</strong> to streamline delivery.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">[SECTION]</span>
+                <h2 class="section-title">projects<span class="blink">_</span></h2>
+            </div>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                            <a href="#" class="project-link"><i class="fas fa-code"></i></a>
+                        </div>
+                    </div>
+                    <h3 class="project-title">E-Commerce Web Application</h3>
+                    <p class="project-desc">Built a Django-based e-commerce platform with cart functionality and PayPal payment integration, hosted on AWS for scalable infrastructure.</p>
+                    <div class="project-tech">
+                        <span>Python</span>
+                        <span>Django</span>
+                        <span>JavaScript</span>
+                        <span>AWS</span>
+                        <span>REST API</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i class="fas fa-blog"></i>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                            <a href="#" class="project-link"><i class="fas fa-code"></i></a>
+                        </div>
+                    </div>
+                    <h3 class="project-title">Blog Web Application</h3>
+                    <p class="project-desc">Developed a full CRUD blogging platform with Facebook API integration for likes/comments, pagination, and search; optimized load performance by 60%.</p>
+                    <div class="project-tech">
+                        <span>Python</span>
+                        <span>Django</span>
+                        <span>JavaScript</span>
+                        <span>SQL</span>
+                        <span>REST API</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Writeups & Research Section -->
+    <section id="writeups" class="writeups">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">[SECTION]</span>
+                <h2 class="section-title">writeups & research<span class="blink">_</span></h2>
+            </div>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i class="fas fa-cube"></i>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://github.com/adityasingh108/HacktheBox-witeups" class="project-link" target="_blank"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                    <h3 class="project-title">Hack The Box Writeups</h3>
+                    <p class="project-desc">Continuously solving HTB machines and publishing detailed walkthroughs covering enumeration, exploitation, and privilege escalation techniques.</p>
+                    <div class="project-tech">
+                        <span>Linux</span>
+                        <span>Windows</span>
+                        <span>Active Directory</span>
+                        <span>Web Exploitation</span>
+                        <span>Privilege Escalation</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i class="fas fa-flag"></i>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://github.com/adityasingh108/ejpt-ctf-writeups" class="project-link" target="_blank"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                    <h3 class="project-title">eJPT CTF Writeups</h3>
+                    <p class="project-desc">Comprehensive CTF writeups from the eJPT certification journey, covering network enumeration, web exploitation, and post-exploitation techniques.</p>
+                    <div class="project-tech">
+                        <span>eJPT</span>
+                        <span>Network Pentesting</span>
+                        <span>CTF</span>
+                        <span>OSCP Prep</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i class="fas fa-bug"></i>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://github.com/adityasingh108/CVE-2026-31431-Metasploit-exploit" class="project-link" target="_blank"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                    <h3 class="project-title">CVE-2026-31431 Metasploit Module</h3>
+                    <p class="project-desc">Custom Metasploit exploit module for copy file local privilege escalation vulnerability. Developed and tested for responsible disclosure.</p>
+                    <div class="project-tech">
+                        <span>Metasploit</span>
+                        <span>Ruby</span>
+                        <span>LPE</span>
+                        <span>CVE</span>
+                        <span>Exploit Dev</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://github.com/adityasingh108/tools" class="project-link" target="_blank"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                    <h3 class="project-title">Security Testing Tools & Checklists</h3>
+                    <p class="project-desc">Curated file upload testing checklist and other security test cases for penetration testers and bug bounty hunters.</p>
+                    <div class="project-tech">
+                        <span>File Upload</span>
+                        <span>Test Cases</span>
+                        <span>Bug Bounty</span>
+                        <span>Pentesting</span>
+                        <span>Checklists</span>
+                    </div>
+                </div>
+            </div>
+            <div class="github-cta">
+                <a href="https://github.com/adityasingh108" class="btn btn-primary" target="_blank">
+                    <i class="fab fa-github"></i> view_all_repos()
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Achievements Section -->
+    <section id="achievements" class="achievements">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">[SECTION]</span>
+                <h2 class="section-title">achievements<span class="blink">_</span></h2>
+            </div>
+            <div class="achievements-grid">
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="achievement-content">
+                        <h3>TCS HackQuest Season 7</h3>
+                        <p class="achievement-rank">All India Rank <span class="rank-highlight">100</span></p>
+                        <p class="achievement-detail">Out of 20,000+ participants</p>
+                    </div>
+                </div>
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <div class="achievement-content">
+                        <h3>GeeksforGeeks Weekly Contest</h3>
+                        <p class="achievement-rank">Ranked Under <span class="rank-highlight">50</span></p>
+                        <p class="achievement-detail">Out of 5,000+ participants (Nov 2022)</p>
+                    </div>
+                </div>
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="achievement-content">
+                        <h3>Competitive Programming</h3>
+                        <p class="achievement-rank"><span class="rank-highlight">1,200+</span> DSA Problems</p>
+                        <p class="achievement-detail">Solved on GeeksforGeeks and LeetCode</p>
+                    </div>
+                </div>
+            </div>
+            <div class="education-block">
+                <div class="edu-card">
+                    <div class="edu-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="edu-content">
+                        <h3>B.Tech, Computer Science</h3>
+                        <p class="edu-institution">Institute of Engineering and Technology</p>
+                        <p class="edu-detail">Alwar, Rajasthan | 2019 – 2023 | CGPA: <span class="highlight">8.58</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">[SECTION]</span>
+                <h2 class="section-title">contact<span class="blink">_</span></h2>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-detail">
+                            <span class="contact-label">Email</span>
+                            <a href="mailto:adityasingh78085@gmail.com">adityasingh78085@gmail.com</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-detail">
+                            <span class="contact-label">Phone</span>
+                            <a href="tel:+919060447390">+91 9060447390</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-detail">
+                            <span class="contact-label">Location</span>
+                            <span>Bhubaneswar, India</span>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fab fa-linkedin"></i>
+                        </div>
+                        <div class="contact-detail">
+                            <span class="contact-label">LinkedIn</span>
+                            <a href="#" target="_blank">Connect on LinkedIn</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <div class="contact-detail">
+                            <span class="contact-label">GitHub</span>
+                            <a href="https://github.com/adityasingh108" target="_blank">github.com/adityasingh108</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-terminal">
+                    <div class="terminal-box">
+                        <div class="terminal-header">
+                            <span class="terminal-btn close"></span>
+                            <span class="terminal-btn minimize"></span>
+                            <span class="terminal-btn maximize"></span>
+                            <span class="terminal-title">send_message.sh</span>
+                        </div>
+                        <div class="terminal-body">
+                            <form id="contact-form">
+                                <div class="form-group">
+                                    <label><span class="prompt">$</span> name=</label>
+                                    <input type="text" class="form-input" placeholder="your_name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label><span class="prompt">$</span> email=</label>
+                                    <input type="email" class="form-input" placeholder="your@email.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label><span class="prompt">$</span> message=</label>
+                                    <textarea class="form-input" rows="4" placeholder="type your message..." required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <span class="prompt">$</span> ./send_message.sh
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p class="footer-text">
+                    <span class="prompt">root@aditya:~$</span> 
+                    <span class="footer-command">echo "Built with caffeine and curiosity"</span>
+                </p>
+                <p class="footer-copyright">
+                    &copy; 2025 Aditya Kumar Singh. All vulnerabilities reported responsibly.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
