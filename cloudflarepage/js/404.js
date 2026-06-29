@@ -63,8 +63,8 @@ if (badUrl) {
 
 // --- FLAG GENERATOR ---
 function generateFlag() {
-    const githubId = 'adityasingh108';
-    const linkedinId = 'aditya-singh-9ab9b81aa';
+    const githubId = 'https://www.linkedin.com/in/aditya-singh-9ab9b81aa';
+    const linkedinId = 'https://github.com/adityasingh108';
 
     // Combine and base64 encode
     const combined = `${githubId}:${linkedinId}`;
@@ -76,7 +76,7 @@ function generateFlag() {
     ).join('');
 
     // Build the flag
-    return `flag{you_pwned_me_connect_me_over_linkedin_${base64}_${randomHex}}`;
+    return `flag{${base64}_${randomHex}}`;
 }
 
 function displayFlag() {
