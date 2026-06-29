@@ -132,31 +132,29 @@ document.querySelectorAll('.about-card, .about-image, .skill-category, .timeline
 
 // === CONTACT FORM HANDLING ===
 const contactForm = document.getElementById('contact-form');
+const submitBtn = document.getElementById('submit-btn');
 
-contactForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const btn = this.querySelector('button[type="submit"]');
-    const originalText = btn.innerHTML;
-    
-    btn.innerHTML = '<span class="prompt">$</span> sending...';
-    btn.disabled = true;
-    
-    // Simulate sending
-    setTimeout(() => {
-        btn.innerHTML = '<span class="prompt">$</span> message_sent!';
-        btn.style.borderColor = '#00ff41';
-        btn.style.color = '#00ff41';
+if (contactForm && submitBtn) {
+    contactForm.addEventListener('submit', function(e) {
+        // Don't prevent default — let formsubmit.co handle it
+        // Just update UI to show sending state
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="prompt">$</span> transmitting...';
+        submitBtn.disabled = true;
+        submitBtn.style.cursor = 'wait';
         
+        // The form will naturally redirect to formsubmit.co
+        // If submission succeeds, user lands on thanks page
+        // If it fails, browser back button works normally
+        
+        // Fallback: restore button after 10s in case of network issues
         setTimeout(() => {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-            btn.style.borderColor = '';
-            btn.style.color = '';
-            contactForm.reset();
-        }, 2000);
-    }, 1500);
-});
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            submitBtn.style.cursor = 'pointer';
+        }, 10000);
+    });
+}
 
 // === TYPING EFFECT FOR HERO TERMINAL ===
 function typeWriter(element, text, speed = 50) {
