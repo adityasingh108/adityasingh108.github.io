@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styled Image Container</title>
+    <style>
+        /* Container to center the image and give it some breathing room */
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px; /* Adjust this to fit your website's layout */
+        }
+
+        /* Styling for the image itself */
+        .styled-image {
+            max-width: 100%; /* Ensures the image shrinks on smaller screens */
+            height: auto;    /* Keeps the aspect ratio correct */
+            border-radius: 12px; /* Soft rounded corners */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* A clean, modern drop shadow */
+            border: 1px solid #e0e0e0; /* A very light border to define edges on white backgrounds */
+            transition: transform 0.3s ease; /* Smooth transition for hover effect */
+        }
+
+        /* Optional: Adds a slight zoom effect when the user hovers over the image */
+        .styled-image:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="image-container">
+        <img class="styled-image" src="https://raw.githubusercontent.com/adityasingh108/HacktheBox-witeups/main/Cape/image-1.png" alt="Cape HackTheBox Writeup Image">
+    </div>
+
+</body>
+</html>
