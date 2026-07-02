@@ -140,7 +140,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
 <div class="progress-bar">
   <div class="progress-hd">
     <span class="progress-label">eJPT CTF Progress <span>//</span> Documented</span>
-    <span class="progress-count" id="progress-count">0 / 16</span>
+    <span class="progress-count" id="progress-count">1 / 16</span>
   </div>
   <div class="progress-track">
     <div class="progress-fill" id="progress-fill"></div>
@@ -220,18 +220,19 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
       </div>
     </div>
     <div class="ctf-grid">
-      <a href="enumeration/ctf-1.html" class="ctf-card draft">
+      <a href="enumeration/enumeration-ctf1.html" class="ctf-card done">
         <div class="ctf-card-hd">
-          <span class="ctf-card-status draft">Draft</span>
+          <span class="ctf-card-status done">Done</span>
           <span class="ctf-card-arrow">&rarr;</span>
         </div>
         <div class="ctf-card-body">
           <div class="ctf-card-title">Enumeration CTF 1</div>
-          <div class="ctf-card-desc">Detailed enumeration of services, users, shares, and directories.</div>
+          <div class="ctf-card-desc">Full writeup with Nmap -p- scan, SMB null session, brute-force, FTP on non-standard port, and SSH banner. 4 flags captured.</div>
           <div class="ctf-card-tags">
-            <span class="ctf-tag cyan">Enum</span>
+            <span class="ctf-tag cyan">Nmap</span>
             <span class="ctf-tag green">SMB</span>
-            <span class="ctf-tag amber">LDAP</span>
+            <span class="ctf-tag amber">FTP</span>
+            <span class="ctf-tag purple">SSH</span>
           </div>
         </div>
       </a>
@@ -522,7 +523,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
 <script>
   window.addEventListener('load', () => {
     const total = 16;
-    const done = 0;
+    const done = 1;
     const pct = (done / total) * 100;
     document.getElementById('progress-fill').style.width = pct + '%';
     document.getElementById('progress-count').textContent = done + ' / ' + total;
