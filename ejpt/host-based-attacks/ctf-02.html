@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Host-Based Attacks CTF 02 | eJPT CTF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --bg: #080c18; --bg-surface: #0d1428; --bg-card: #111827; --border: #1d2d50; --border-sub: #162040;
+  --cyan: #22d3ee; --cyan-dim: rgba(34,211,238,.12); --amber: #f59e0b; --amber-dim: rgba(245,158,11,.12);
+  --green: #22c55e; --green-dim: rgba(34,197,94,.12); --red: #ef4444; --red-dim: rgba(239,68,68,.12);
+  --text: #e2e8f0; --muted: #94a3b8; --dim: #64748b;
+  --mono: 'JetBrains Mono', monospace; --sans: 'Inter', sans-serif; --r: 6px; --r-lg: 10px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.7; min-height: 100vh; }
+
+.nav { position: sticky; top: 0; z-index: 300; display: flex; align-items: center; justify-content: space-between; padding: 16px 48px; background: rgba(8,12,24,.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+.nav-brand { font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--text); text-decoration: none; letter-spacing: -.02em; }
+.nav-brand span { color: var(--cyan); }
+.nav-links { display: flex; gap: 28px; }
+.nav-links a { font-family: var(--mono); font-size: 12px; color: var(--muted); text-decoration: none; transition: color .14s; letter-spacing: .04em; text-transform: uppercase; }
+.nav-links a:hover { color: var(--cyan); }
+
+.hero { padding: 64px 48px 48px; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; max-width: 1300px; margin: 0 auto; }
+.hero-eyebrow { font-family: var(--mono); font-size: 10.5px; color: var(--dim); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+.hero-eyebrow span { color: var(--cyan); }
+.hero-title { font-family: var(--mono); font-size: clamp(32px, 5vw, 54px); font-weight: 700; line-height: 1.1; color: var(--text); letter-spacing: -.05em; margin-bottom: 16px; }
+.cursor { display: inline-block; width: 5px; height: .82em; background: var(--cyan); margin-left: 4px; vertical-align: text-bottom; animation: blink 1.1s step-end infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+.draft-badge {
+  display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .12em; color: var(--amber); background: var(--amber-dim);
+  border: 1px solid rgba(245,158,11,.22); padding: 5px 14px; border-radius: 4px; margin-bottom: 20px;
+}
+
+.content { max-width: 1300px; margin: 0 auto; padding: 48px 48px 60px; }
+
+.placeholder-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg);
+  padding: 40px; text-align: center; max-width: 700px; margin: 0 auto;
+}
+.placeholder-icon { font-size: 3rem; color: var(--amber); margin-bottom: 16px; opacity: .7; }
+.placeholder-title { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+.placeholder-text { color: var(--muted); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
+.placeholder-note {
+  font-family: var(--mono); font-size: 12px; color: var(--dim);
+  border-top: 1px solid var(--border-sub); padding-top: 20px; margin-top: 20px;
+}
+.placeholder-note code { color: var(--cyan); background: var(--cyan-dim); padding: 2px 8px; border-radius: 3px; font-size: 11px; }
+
+.back-btn {
+  display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 12px;
+  color: var(--cyan); text-decoration: none; border: 1px solid var(--border); padding: 10px 20px;
+  border-radius: var(--r); transition: all .14s; margin-top: 32px;
+}
+.back-btn:hover { border-color: var(--cyan); background: var(--cyan-dim); }
+
+.footer {
+  padding: 28px 48px; border-top: 1px solid var(--border); background: var(--bg-surface);
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  max-width: 1300px; margin: 0 auto;
+}
+.footer-l { font-family: var(--mono); font-size: 11px; color: var(--dim); }
+.footer-l span { color: var(--cyan); }
+.footer-r { display: flex; gap: 16px; }
+.ft-link { font-family: var(--mono); font-size: 11px; color: var(--dim); text-decoration: none; transition: color .14s; letter-spacing: .04em; }
+.ft-link:hover { color: var(--cyan); }
+
+@media (max-width: 768px) {
+  .nav, .hero, .content, .footer { padding-left: 24px; padding-right: 24px; }
+  .hero { padding-top: 40px; }
+  .hero-title { font-size: 28px; }
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-brand">root@aditya<span>://ejpt</span></a>
+  <div class="nav-links">
+    <a href="index.html">&larr; eJPT Hub</a>
+    <a href="https://github.com/adityasingh108/ejpt-ctf-writeups" target="_blank">GitHub</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">eJPT CTF <span>&mdash;</span> Host-Based Attacks</div>
+  <div class="draft-badge"><i class="fas fa-pen"></i> Work in Progress</div>
+  <div class="hero-title">System Host-Based Attacks CTF 02<span class="cursor"></span></div>
+</section>
+
+<div class="content">
+  <div class="placeholder-card">
+    <div class="placeholder-icon"><i class="fas fa-file-code"></i></div>
+    <div class="placeholder-title">Writeup Being Documented</div>
+    <p class="placeholder-text">
+      This CTF writeup is currently being documented. The full walkthrough with reconnaissance,
+      enumeration, exploitation, and privilege escalation steps will be published here soon.
+    </p>
+    <p class="placeholder-note">
+      In the meantime, check out the <a href="index.html" style="color:var(--cyan);text-decoration:none;">eJPT Hub</a> or the <a href="https://github.com/adityasingh108/ejpt-ctf-writeups" target="_blank" style="color:var(--cyan);text-decoration:none;">GitHub repository</a>.
+      <br><br>
+      <code>// TODO: Add writeup content</code>
+    </p>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-l">
+    <span>root@aditya</span> &mdash; eJPT CTF Writeups
+  </div>
+  <div class="footer-r">
+    <a href="index.html" class="ft-link">&larr; eJPT Hub</a>
+    <a href="https://github.com/adityasingh108/ejpt-ctf-writeups" class="ft-link" target="_blank">GitHub</a>
+    <a href="https://www.linkedin.com/in/aditya-singh-9ab9b81aa/" class="ft-link" target="_blank">LinkedIn</a>
+  </div>
+</footer>
+
+</body>
+</html>
