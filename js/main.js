@@ -1,261 +1,400 @@
-// === CYBERSECURITY PORTFOLIO INTERACTIVITY ===
+/**
+ * Cyber Nebula Theme - Main JavaScript
+ * Features: Matrix rain, navbar scroll, mobile menu, smooth scroll,
+ * fade-in animations, skill bars, counters, form handling, glitch effect, typing
+ */
 
-// === MATRIX RAIN EFFECT ===
-const canvas = document.getElementById('matrix-canvas');
-const ctx = canvas.getContext('2d');
+(function() {
+    'use strict';
 
-let width, height;
-let columns;
-const fontSize = 14;
-const drops = [];
+    /* ============================================
+       MATRIX RAIN CANVAS BACKGROUND
+       ============================================ */
+    const canvas = document.getElementById('matrix-canvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        let animationId;
+        let isActive = true;
 
-// Characters for matrix rain (mix of Latin and Katakana-like characters)
-const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()_+-=[]{}|;:,.<>?/~`アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-
-function resizeCanvas() {
-    width = window.innerWidth;
-    height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
-    columns = Math.floor(width / fontSize);
-    
-    // Reset drops
-    drops.length = 0;
-    for (let i = 0; i < columns; i++) {
-        drops[i] = Math.random() * -100; // Start above viewport
-    }
-}
-
-function drawMatrix() {
-    ctx.fillStyle = 'rgba(10, 10, 15, 0.05)';
-    ctx.fillRect(0, 0, width, height);
-    
-    ctx.fillStyle = '#00ff41';
-    ctx.font = fontSize + 'px JetBrains Mono';
-    
-    for (let i = 0; i < drops.length; i++) {
-        const text = chars.charAt(Math.floor(Math.random() * chars.length));
-        
-        // Vary color for some characters
-        if (Math.random() > 0.95) {
-            ctx.fillStyle = '#00d4ff';
-        } else if (Math.random() > 0.98) {
-            ctx.fillStyle = '#ffffff';
-        } else {
-            ctx.fillStyle = '#00ff41';
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
-        
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        
-        if (drops[i] * fontSize > height && Math.random() > 0.975) {
-            drops[i] = 0;
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@#$%^&*';
+        const fontSize = 14;
+        const columns = Math.floor(canvas.width / fontSize);
+        const drops = [];
+
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.random() * -100;
         }
-        
-        drops[i]++;
-    }
-}
 
-resizeCanvas();
-setInterval(drawMatrix, 50);
+        function drawMatrix() {
+            if (!isActive) return;
 
-window.addEventListener('resize', resizeCanvas);
+            ctx.fillStyle = 'rgba(10, 10, 18, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-// === NAVBAR SCROLL EFFECT ===
-const navbar = document.getElementById('navbar');
-let lastScrollY = 0;
+            ctx.fillStyle = '#06b6d4';
+            ctx.font = fontSize + 'px JetBrains Mono';
 
-window.addEventListener('scroll', () => {
-    const scrollY = window.scrollY;
-    
-    if (scrollY > 50) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
-    
-    lastScrollY = scrollY;
-});
+            for (let i = 0; i < drops.length; i++) {
+                const char = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(char, i * fontSize, drops[i] * fontSize);
 
-// === MOBILE HAMBURGER MENU ===
-const hamburger = document.querySelector('.hamburger');
-const navLinks = document.querySelector('.nav-links');
-
-hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navLinks.classList.toggle('active');
-});
-
-// Close mobile menu when clicking a link
-navLinks.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        navLinks.classList.remove('active');
-    });
-});
-
-// === SMOOTH SCROLLING FOR NAV LINKS ===
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            const offsetTop = target.offsetTop - 70; // Account for navbar
-            window.scrollTo({
-                top: offsetTop,
-                behavior: 'smooth'
-            });
-        }
-    });
-});
-
-// === INTERSECTION OBSERVER FOR FADE-IN ANIMATIONS ===
-const observerOptions = {
-    root: null,
-    rootMargin: '0px',
-    threshold: 0.1
-};
-
-const fadeInObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-        }
-    });
-}, observerOptions);
-
-// Add fade-in class to all major elements and observe them
-document.querySelectorAll('.about-card, .about-image, .skill-category, .timeline-item, .project-card, .achievement-card, .edu-card, .contact-item, .contact-terminal').forEach(el => {
-    el.classList.add('fade-in');
-    fadeInObserver.observe(el);
-});
-
-// === CONTACT FORM HANDLING ===
-const contactForm = document.getElementById('contact-form');
-const submitBtn = document.getElementById('submit-btn');
-
-if (contactForm && submitBtn) {
-    contactForm.addEventListener('submit', function(e) {
-        // Don't prevent default — let formsubmit.co handle it
-        // Just update UI to show sending state
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<span class="prompt">$</span> transmitting...';
-        submitBtn.disabled = true;
-        submitBtn.style.cursor = 'wait';
-        
-        // The form will naturally redirect to formsubmit.co
-        // If submission succeeds, user lands on thanks page
-        // If it fails, browser back button works normally
-        
-        // Fallback: restore button after 10s in case of network issues
-        setTimeout(() => {
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-            submitBtn.style.cursor = 'pointer';
-        }, 10000);
-    });
-}
-
-// === TYPING EFFECT FOR HERO TERMINAL ===
-function typeWriter(element, text, speed = 50) {
-    let i = 0;
-    element.textContent = '';
-    
-    function type() {
-        if (i < text.length) {
-            element.textContent += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
-        }
-    }
-    
-    type();
-}
-
-// === GLITCH EFFECT ON NAME (Optional enhancement) ===
-function glitchEffect(element) {
-    const originalText = element.textContent;
-    const glitchChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
-    
-    let iterations = 0;
-    const interval = setInterval(() => {
-        element.textContent = originalText
-            .split('')
-            .map((char, index) => {
-                if (index < iterations) {
-                    return originalText[index];
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
                 }
-                return glitchChars[Math.floor(Math.random() * glitchChars.length)];
-            })
-            .join('');
-        
-        if (iterations >= originalText.length) {
-            clearInterval(interval);
-        }
-        
-        iterations += 1/3;
-    }, 30);
-}
-
-// Apply glitch effect on page load for the hero title
-window.addEventListener('load', () => {
-    const heroTitle = document.querySelector('.hero .terminal-line:first-child .response');
-    if (heroTitle) {
-        setTimeout(() => {
-            glitchEffect(heroTitle);
-        }, 500);
-    }
-});
-
-// === SKILL TAG COUNTER ANIMATION ===
-function animateCounters() {
-    const statNumbers = document.querySelectorAll('.stat-number');
-    
-    statNumbers.forEach(stat => {
-        const target = stat.textContent;
-        const isPercent = target.includes('%');
-        const numericValue = parseInt(target.replace(/\D/g, ''));
-        
-        let current = 0;
-        const increment = Math.ceil(numericValue / 50);
-        const duration = 1500;
-        const stepTime = duration / 50;
-        
-        const updateCounter = () => {
-            current += increment;
-            if (current >= numericValue) {
-                current = numericValue;
-                stat.textContent = target;
-            } else {
-                stat.textContent = current + (isPercent ? '%' : '+');
-                setTimeout(updateCounter, stepTime);
+                drops[i]++;
             }
-        };
-        
-        // Use intersection observer to trigger counter animation
-        const counterObserver = new IntersectionObserver((entries) => {
+
+            animationId = requestAnimationFrame(drawMatrix);
+        }
+
+        drawMatrix();
+
+        // Pause when tab is hidden to save resources
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                isActive = false;
+                cancelAnimationFrame(animationId);
+            } else {
+                isActive = true;
+                drawMatrix();
+            }
+        });
+    }
+
+    /* ============================================
+       NAVBAR SCROLL EFFECT
+       ============================================ */
+    const navbar = document.getElementById('navbar');
+    if (navbar) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    }
+
+    /* ============================================
+       MOBILE HAMBURGER MENU
+       ============================================ */
+    const navToggle = document.getElementById('nav-toggle');
+    const navMenu = document.getElementById('nav-menu');
+
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', () => {
+            navToggle.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked
+        const navLinks = navMenu.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                navToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+    }
+
+    /* ============================================
+       SMOOTH SCROLL NAVIGATION
+       ============================================ */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href === '#') return;
+
+            const target = document.querySelector(href);
+            if (target) {
+                e.preventDefault();
+                const offset = 80; // Account for fixed navbar
+                const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    /* ============================================
+       INTERSECTION OBSERVER - FADE IN ANIMATIONS
+       ============================================ */
+    const fadeElements = document.querySelectorAll(
+        '.section-header, .about-grid, .skills-grid, .timeline-item, ' +
+        '.project-card, .writeup-card, .achievement-card, .education-card, ' +
+        '.contact-grid, .hub-card, .ctf-card, .progress-wrapper'
+    );
+
+    const fadeObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                fadeObserver.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+
+    fadeElements.forEach(el => {
+        el.classList.add('fade-in');
+        fadeObserver.observe(el);
+    });
+
+    /* ============================================
+       SKILL BAR ANIMATION ON SCROLL
+       ============================================ */
+    const skillBars = document.querySelectorAll('.skill-progress');
+
+    const skillObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const bar = entry.target;
+                const width = bar.getAttribute('data-width');
+                if (width) {
+                    setTimeout(() => {
+                        bar.style.width = width + '%';
+                    }, 200);
+                }
+                skillObserver.unobserve(bar);
+            }
+        });
+    }, {
+        threshold: 0.5
+    });
+
+    skillBars.forEach(bar => {
+        skillObserver.observe(bar);
+    });
+
+    /* ============================================
+       COUNTER ANIMATION FOR STATS
+       ============================================ */
+    const statNumbers = document.querySelectorAll('.stat-number');
+
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const el = entry.target;
+                const target = parseInt(el.getAttribute('data-count'), 10);
+                const duration = 2000;
+                const start = performance.now();
+
+                function updateCounter(currentTime) {
+                    const elapsed = currentTime - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    // Ease out cubic
+                    const easeOut = 1 - Math.pow(1 - progress, 3);
+                    const current = Math.floor(easeOut * target);
+                    el.textContent = current;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        el.textContent = target;
+                    }
+                }
+
+                requestAnimationFrame(updateCounter);
+                counterObserver.unobserve(el);
+            }
+        });
+    }, {
+        threshold: 0.5
+    });
+
+    statNumbers.forEach(num => {
+        counterObserver.observe(num);
+    });
+
+    /* ============================================
+       CONTACT FORM HANDLING
+       ============================================ */
+    const contactForm = document.querySelector('.terminal-form form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            btn.disabled = true;
+
+            // FormSubmit.co handles the actual submission
+            // This is just for visual feedback before redirect
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 3000);
+        });
+    }
+
+    /* ============================================
+       GLITCH EFFECT ON HERO TITLE
+       ============================================ */
+    const glitchTitle = document.querySelector('.glitch-text');
+    if (glitchTitle) {
+        let glitchInterval;
+
+        function triggerGlitch() {
+            glitchTitle.style.animation = 'none';
+            void glitchTitle.offsetWidth; // Force reflow
+            glitchTitle.style.animation = '';
+        }
+
+        // Random glitch every 5-10 seconds
+        function scheduleGlitch() {
+            const delay = 5000 + Math.random() * 5000;
+            glitchInterval = setTimeout(() => {
+                triggerGlitch();
+                scheduleGlitch();
+            }, delay);
+        }
+
+        scheduleGlitch();
+
+        // Glitch on hover
+        glitchTitle.addEventListener('mouseenter', triggerGlitch);
+    }
+
+    /* ============================================
+       TYPING EFFECT FOR TERMINAL
+       ============================================ */
+    const terminalCommands = document.querySelectorAll('.terminal-command.blink');
+    terminalCommands.forEach(cmd => {
+        const text = cmd.textContent;
+        let index = 0;
+        cmd.textContent = '';
+
+        function typeChar() {
+            if (index < text.length) {
+                cmd.textContent += text.charAt(index);
+                index++;
+                setTimeout(typeChar, 100 + Math.random() * 100);
+            } else {
+                cmd.classList.add('blink');
+            }
+        }
+
+        // Start typing after a short delay
+        setTimeout(typeChar, 1000);
+    });
+
+    /* ============================================
+       ACTIVE NAV LINK HIGHLIGHTING ON SCROLL
+       ============================================ */
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
+
+    function highlightNavLink() {
+        const scrollPos = window.scrollY + 100;
+
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.offsetHeight;
+            const sectionId = section.getAttribute('id');
+
+            if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + sectionId) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
+    }
+
+    window.addEventListener('scroll', highlightNavLink);
+    highlightNavLink(); // Initial call
+
+    /* ============================================
+       NEON GLOW EFFECT ON INTERACTIVE ELEMENTS
+       ============================================ */
+    const interactiveElements = document.querySelectorAll(
+        '.btn-primary, .project-card, .writeup-card, .hub-card, .ctf-card'
+    );
+
+    interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            el.style.transition = 'all 0.3s ease';
+        });
+    });
+
+    /* ============================================
+       PARALLAX EFFECT FOR HERO
+       ============================================ */
+    const hero = document.querySelector('.hero');
+    if (hero) {
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const heroContent = hero.querySelector('.hero-content');
+            if (heroContent && scrolled < window.innerHeight) {
+                heroContent.style.transform = `translateY(${scrolled * 0.3}px)`;
+                heroContent.style.opacity = 1 - (scrolled / window.innerHeight);
+            }
+        });
+    }
+
+    /* ============================================
+       PROGRESS BAR ANIMATION FOR eJPT PAGE
+       ============================================ */
+    const progressBarFill = document.querySelector('.progress-bar-fill');
+    if (progressBarFill) {
+        const progressObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    updateCounter();
-                    counterObserver.unobserve(entry.target);
+                    const targetWidth = progressBarFill.style.width;
+                    progressBarFill.style.width = '0%';
+                    setTimeout(() => {
+                        progressBarFill.style.width = targetWidth;
+                    }, 300);
+                    progressObserver.unobserve(entry.target);
                 }
             });
         }, { threshold: 0.5 });
-        
-        counterObserver.observe(stat);
-    });
-}
 
-animateCounters();
+        progressObserver.observe(progressBarFill.parentElement);
+    }
 
-// === PARALLAX EFFECT FOR MATRIX CANVAS ===
-window.addEventListener('scroll', () => {
-    const scrollY = window.scrollY;
-    canvas.style.transform = `translateY(${scrollY * 0.3}px)`;
-});
+    /* ============================================
+       UTILITY: DEBOUNCE FUNCTION
+       ============================================ */
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
 
-// === CONSOLE EASTER EGG ===
-console.log('%c[SECURITY PORTFOLIO]', 'color: #00ff41; font-size: 16px; font-weight: bold;');
-console.log('%c> Aditya Kumar Singh - Security Analyst', 'color: #00d4ff; font-size: 12px;');
-console.log('%c> VAPT | Web | API | Mobile | Cloud | Network', 'color: #8888a0; font-size: 11px;');
-console.log('%c> 100+ vulnerabilities found and counting...', 'color: #ffd700; font-size: 11px;');
+    // Debounced resize handler for canvas
+    window.addEventListener('resize', debounce(() => {
+        if (canvas) {
+            resizeCanvas();
+        }
+    }, 250));
+
+    /* ============================================
+       CONSOLE EASTER EGG
+       ============================================ */
+    console.log('%c Welcome to Aditya\'s Cybersecurity Portfolio ',
+        'background: linear-gradient(135deg, #7c3aed, #06b6d4); color: #f8fafc; font-size: 16px; font-weight: bold; padding: 10px 20px; border-radius: 8px;');
+    console.log('%c If you\'re reading this, you might be a developer too! ',
+        'color: #06b6d4; font-size: 12px;');
+    console.log('%c GitHub: https://github.com/adityasingh108 ',
+        'color: #94a3b8; font-size: 11px;');
+
+})();

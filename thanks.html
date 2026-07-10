@@ -4,91 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Message Sent | Aditya Kumar Singh</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
     <style>
-        .thanks-container {
+        .thanks-page {
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            text-align: center;
+            justify-content: center;
             padding: 2rem;
-            position: relative;
-            z-index: 1;
         }
-        .thanks-terminal {
+        .thanks-container {
+            text-align: center;
             max-width: 600px;
-            width: 100%;
-            margin-bottom: 2rem;
         }
         .thanks-icon {
-            font-size: 3rem;
-            color: var(--accent-green);
+            font-size: 4rem;
+            color: var(--success-green);
             margin-bottom: 1.5rem;
             animation: pulse 2s ease-in-out infinite;
+        }
+        .thanks-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--nebula-purple), var(--cyber-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .thanks-terminal {
+            margin: 2rem 0;
+            text-align: left;
+        }
+        .thanks-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
         }
         @keyframes pulse {
             0%, 100% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.1); opacity: 0.8; }
         }
-        .thanks-title {
-            font-family: var(--font-mono);
-            font-size: 1.5rem;
-            color: var(--accent-green);
-            margin-bottom: 1rem;
-        }
-        .thanks-text {
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
     </style>
 </head>
 <body>
-    <canvas id="matrix-canvas"></canvas>
+    <canvas id="matrix-canvas" class="matrix-bg"></canvas>
 
-    <div class="thanks-container">
-        <div class="thanks-terminal">
-            <div class="terminal-box">
+    <div class="thanks-page">
+        <div class="thanks-container">
+            <div class="thanks-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h1 class="thanks-title">Message Sent Successfully</h1>
+            <p class="section-subtitle">Thank you for reaching out! I'll get back to you soon.</p>
+            
+            <div class="terminal-box thanks-terminal">
                 <div class="terminal-header">
-                    <span class="terminal-btn close"></span>
-                    <span class="terminal-btn minimize"></span>
-                    <span class="terminal-btn maximize"></span>
-                    <span class="terminal-title">message_sent.log</span>
+                    <span class="terminal-btn red"></span>
+                    <span class="terminal-btn yellow"></span>
+                    <span class="terminal-btn green"></span>
+                    <span class="terminal-title">aditya@portfolio:~$ message_status</span>
                 </div>
                 <div class="terminal-body">
-                    <p class="terminal-line"><span class="prompt">$</span> <span class="command">./send_message.sh</span></p>
-                    <p class="terminal-line response">[OK] Message transmitted successfully</p>
-                    <p class="terminal-line response">[OK] Delivered to: adityasingh78085@gmail.com</p>
-                    <p class="terminal-line response">[INFO] Response time: ~fast</p>
-                    <p class="terminal-line"><span class="prompt">$</span> <span class="cursor">_</span></p>
+                    <p><span class="terminal-prompt">$</span> <span class="terminal-command">send_message</span></p>
+                    <p class="terminal-output success">Message sent successfully!</p>
+                    <p><span class="terminal-prompt">$</span> <span class="terminal-command">status</span></p>
+                    <p class="terminal-output">Waiting for response...</p>
+                    <p><span class="terminal-prompt">$</span> <span class="terminal-command">eta</span></p>
+                    <p class="terminal-output">Usually within 24-48 hours</p>
+                    <p><span class="terminal-prompt">$</span> <span class="terminal-command blink">_</span></p>
                 </div>
             </div>
-        </div>
-
-        <div class="thanks-icon">
-            <i class="fas fa-check-circle"></i>
-        </div>
-
-        <h1 class="thanks-title">Message Sent Successfully!</h1>
-        <p class="thanks-text">
-            Thanks for reaching out. I'll get back to you as soon as possible.<br>
-            In the meantime, feel free to explore my GitHub or LinkedIn.
-        </p>
-
-        <div class="hero-cta">
-            <a href="index.html" class="btn btn-primary">
-                <i class="fas fa-arrow-left"></i> cd ~/portfolio
-            </a>
-            <a href="https://github.com/adityasingh108" class="btn btn-secondary" target="_blank">
-                <i class="fab fa-github"></i> view_github()
-            </a>
+            
+            <div class="thanks-actions">
+                <a href="../index.html" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+                <a href="https://github.com/adityasingh108" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+                    <i class="fab fa-github"></i> View GitHub
+                </a>
+            </div>
         </div>
     </div>
 
-    <script src="js/main.js"></script>
+    <script src="../js/main.js"></script>
 </body>
 </html>

